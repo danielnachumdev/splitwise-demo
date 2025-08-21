@@ -18,9 +18,6 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({ currentUser }) => (
                     Manage your group expenses
                 </Typography>
             </Box>
-            <Typography variant="body2" className="home-header-welcome">
-                Welcome, {currentUser?.name}
-            </Typography>
         </Toolbar>
     </AppBar>
 );
