@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Group as GroupIcon } from '@mui/icons-material';
 import type { Group, User } from '../types';
-import localStorageService from '../services/localStorageService';
+import { userService, groupService, demoDataService } from '../services';
 import CreateGroupModal from './CreateGroupModal';
 import GroupCard from './GroupCard';
 
@@ -30,6 +30,8 @@ const HomePage: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [error, setError] = useState<string | null>(null);
 
+    // Services are imported directly
+
     useEffect(() => {
         initializeDemoUser();
         loadGroups();
@@ -39,9 +41,9 @@ const HomePage: React.FC = () => {
     const initializeDemoUser = async () => {
         try {
             // Check if demo user exists, if not create one
-            let user = await localStorageService.getUserById(DEMO_USER_ID);
+            let user = await userService.getUserById(DEMO_USER_ID);
             if (!user) {
-                user = await localStorageService.createUser({
+                user = await userService.createUser({
                     name: 'Demo User',
                     email: 'demo@example.com',
                 });
@@ -55,7 +57,7 @@ const HomePage: React.FC = () => {
 
     const initializeDemoData = async () => {
         try {
-            await localStorageService.initializeDemoData();
+            await demoDataService.initializeDemoData();
             // Refresh groups after demo data is initialized
             await loadGroups();
         } catch (error) {
@@ -67,7 +69,7 @@ const HomePage: React.FC = () => {
         try {
             setLoading(true);
             setError(null);
-            const userGroups = await localStorageService.getGroupsByUserId(DEMO_USER_ID);
+            const userGroups = await groupService.getGroupsByUserId(DEMO_USER_ID);
             setGroups(userGroups);
         } catch (error) {
             setError('Failed to load groups');
@@ -84,13 +86,13 @@ const HomePage: React.FC = () => {
     }) => {
         try {
             // Create the group
-            const newGroup = await localStorageService.createGroup({
+            const newGroup = await groupService.createGroup({
                 ...groupData,
                 createdBy: DEMO_USER_ID,
             });
 
             // Add the current user to the group as admin
-            await localStorageService.addUserToGroup(DEMO_USER_ID, newGroup.id, 'admin');
+            await groupService.addUserToGroup(DEMO_USER_ID, newGroup.id, 'admin');
 
             // Refresh the groups list
             await loadGroups();

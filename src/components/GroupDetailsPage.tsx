@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material';
 import type { Group, User, Payment, PaymentParticipant, UserBalance } from '../types';
-import localStorageService from '../services/localStorageService';
+import { groupService, userService, paymentService, balanceService } from '../services';
 import UserCard from './UserCard';
 import PaymentCard from './PaymentCard';
 import AddDataModal from './AddDataModal';
@@ -29,17 +29,20 @@ const GroupDetailsPage: React.FC = () => {
     const [payments, setPayments] = useState<Payment[]>([]);
     const [paymentParticipants, setPaymentParticipants] = useState<PaymentParticipant[]>([]);
     const [userBalances, setUserBalances] = useState<UserBalance[]>([]);
-    const [debtBreakdown, setDebtBreakdown] = useState<Array<{
-        fromUserId: string;
-        toUserId: string;
-        amount: number;
-        description: string;
-    }>>([]);
+    // Note: debtBreakdown functionality will be implemented later
+    // const [debtBreakdown, setDebtBreakdown] = useState<Array<{
+    //     fromUserId: string;
+    //     toUserId: string;
+    //     amount: number;
+    //     description: string;
+    // }>>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddDataModal, setShowAddDataModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+
+    // Services are imported directly
 
     useEffect(() => {
         if (groupId) {
@@ -53,7 +56,7 @@ const GroupDetailsPage: React.FC = () => {
             setError(null);
 
             // Load group details
-            const groupData = await localStorageService.getGroupById(groupId!);
+            const groupData = await groupService.getGroupById(groupId!);
             if (!groupData) {
                 setError('Group not found');
                 return;
@@ -61,34 +64,34 @@ const GroupDetailsPage: React.FC = () => {
             setGroup(groupData);
 
             // Load group members
-            const userGroups = await localStorageService.getUserGroups();
+            const userGroups = await groupService.getUserGroups();
             const memberIds = userGroups
                 .filter(ug => ug.groupId === groupId && ug.isActive)
                 .map(ug => ug.userId);
 
-            const allUsers = await localStorageService.getUsers();
+            const allUsers = await userService.getUsers();
             const groupUsers = allUsers.filter(user => memberIds.includes(user.id));
             setUsers(groupUsers);
 
             // Load payments
-            const groupPayments = await localStorageService.getPaymentsByGroupId(groupId!);
+            const groupPayments = await paymentService.getPaymentsByGroupId(groupId!);
             setPayments(groupPayments);
 
             // Load payment participants
-            const allParticipants = await localStorageService.getPaymentParticipants();
+            const allParticipants = await paymentService.getPaymentParticipants();
             const groupParticipants = allParticipants.filter(pp =>
                 groupPayments.some(payment => payment.id === pp.paymentId)
             );
             setPaymentParticipants(groupParticipants);
 
             // Load user balances
-            const balances = await localStorageService.getUserBalances();
+            const balances = await balanceService.getUserBalances();
             const groupBalances = balances.filter(balance => balance.groupId === groupId);
             setUserBalances(groupBalances);
 
             // Load debt breakdown
-            const debtData = await localStorageService.getGroupDebtBreakdown(groupId!);
-            setDebtBreakdown(debtData);
+            // Note: This method is not yet implemented in BalanceService
+            // setDebtBreakdown(debtData);
 
         } catch (error) {
             setError('Failed to load group data');
