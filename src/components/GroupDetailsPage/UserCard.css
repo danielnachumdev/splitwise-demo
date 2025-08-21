@@ -1,0 +1,66 @@
+/* UserCard Component Styles */
+
+.user-card {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.user-card-content {
+    flex-grow: 1;
+    padding: 16px;
+}
+
+.user-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.user-card-avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 16px;
+    font-size: 1rem;
+}
+
+.user-card-info {
+    flex-grow: 1;
+}
+
+.user-card-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.user-card-balance {
+    font-weight: bold;
+}
+
+.user-card-balance-success {
+    color: #2e7d32;
+}
+
+.user-card-balance-error {
+    color: #d32f2f;
+}
+
+.user-card-balance-default {
+    color: #1976d2;
+}
+
+.user-card-footer {
+    display: flex;
+    justify-content: center;
+}
+
+.user-card-status-chip {
+    font-size: 0.75rem;
+}

@@ -351,16 +351,23 @@ interface UserCardProps {
 ### **Component Organization Decision Tree**
 ```
 Is the component simple and under 200 lines?
-├─ Yes → Does it have a CSS file?
-│   ├─ Yes → Create folder for encapsulation
-│   └─ No → Use inline local components only
+├─ Yes → Does it have complex styling needs?
+│   ├─ Yes → Create folder with CSS file for encapsulation
+│   └─ No → Keep as single file (no CSS needed)
 └─ No → Does it have complex sub-sections?
     ├─ Yes → Extract to separate files in a folder
     └─ No → Break into separate files in a folder
 
 Does the component have complex styling?
 ├─ Yes → Extract styles to CSS file AND create folder
-└─ No → Keep inline styles or sx props
+└─ No → Keep inline styles or sx props, no folder needed
+
+Complex styling includes:
+- More than 3-4 style properties
+- Hover states and animations
+- Responsive design requirements
+- Multiple styled elements
+- Design system consistency needs
 ```
 
 ### **Local Components vs Separate Files**
@@ -429,8 +436,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ payment, onClose }) => {
 };
 ```
 
-
-
 #### **Sub-Components (Separate Files)**
 When a component becomes complex or is reused elsewhere, extract to separate files:
 
@@ -492,6 +497,50 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ payment, onClose }) => {
     );
 };
 ```
+
+### **Mixed CSS Approach (Real-World Pattern)**
+
+Based on the HomePage structure, we've identified a practical mixed approach:
+
+#### **Components with CSS Files (Folder Structure)**
+- **HomePage** - Has CSS file for main page styling
+- **HomeHeader** - Has CSS file for header styling  
+- **MainContent** - Has CSS file for content layout
+- **GroupCard** - Has CSS file for card styling
+- **CreateGroupForm** - Has CSS file for form styling
+
+#### **Components without CSS Files (Single Files)**
+- **CreateGroupModal** - Simple modal wrapper, no complex styling needed
+
+#### **When to Use Each Approach**
+
+**Use CSS Files When:**
+- Component has complex styling (more than 3-4 style properties)
+- Component needs hover states, animations, or responsive design
+- Component has multiple styled elements that benefit from centralized styling
+- Component is part of a design system that needs consistency
+
+**Keep as Single File When:**
+- Component has minimal or no styling needs
+- Component is a simple wrapper or container
+- Component inherits all styling from MUI components
+- Component is purely functional with no visual complexity
+
+#### **Real-World Example: HomePage Structure**
+```
+src/components/HomePage/
+├── HomePage.tsx + HomePage.css          # Complex page layout
+├── HomeHeader.tsx + HomeHeader.css      # Complex header styling
+└── MainContent/
+    ├── MainContent.tsx + MainContent.css    # Complex content layout
+    ├── GroupCard/                           # Complex card styling
+    │   ├── GroupCard.tsx + GroupCard.css
+    └── CreateGroupModal/                     # Simple modal wrapper
+        ├── CreateGroupModal.tsx              # No CSS needed
+        └── CreateGroupForm.tsx + CreateGroupForm.css  # Complex form styling
+```
+
+**Key Insight:** The decision to use CSS files should be based on **styling complexity**, not just component complexity. A simple component with complex styling needs a CSS file, while a complex component with simple styling might not.
 
 ## 🧪 **Testing Considerations**
 
@@ -681,6 +730,50 @@ export { default as Button } from './Button';
 import { Button } from '../components/Button';
 ```
 
+### **Example 6: Real-World Feature Structure (HomePage Pattern)**
+```
+src/components/HomePage/
+├── index.ts              # Export main component
+├── HomePage.tsx          # Main page component
+├── HomePage.css          # Main page styles
+├── HomeHeader.tsx        # Header component
+├── HomeHeader.css        # Header styles
+└── MainContent/          # Main content folder
+    ├── index.ts          # Export main content
+    ├── MainContent.tsx   # Main content component
+    ├── MainContent.css   # Main content styles
+    ├── GroupCard/        # Sub-component folder
+    │   ├── index.ts      # Export group card
+    │   ├── GroupCard.tsx # Group card component
+    │   └── GroupCard.css # Group card styles
+    └── CreateGroupModal/ # Modal component folder
+        ├── index.ts      # Export modal
+        ├── CreateGroupModal.tsx    # Modal component
+        ├── CreateGroupForm.tsx     # Form sub-component
+        └── CreateGroupForm.css # Form styles
+```
+
+**Key Patterns:**
+- **Top-level components** (HomePage, HomeHeader) have CSS files for encapsulation
+- **Sub-component folders** (MainContent) contain related components
+- **Components with CSS** are organized in folders for better encapsulation
+- **Components without CSS** can be kept as single files if they're simple
+- **Mixed approach** where some components have CSS and others don't, based on complexity
+
+### **Example 7: Modal Pattern (CreateGroupModal)**
+```
+src/components/CreateGroupModal/
+├── index.ts              # Export modal component
+├── CreateGroupModal.tsx  # Modal wrapper (no CSS needed)
+└── CreateGroupForm.tsx   # Form component with CSS
+    └── CreateGroupForm.css # Form-specific styles
+```
+
+**When to use this pattern:**
+- **Modal wrapper** handles modal logic but has minimal styling
+- **Form component** has complex styling that benefits from CSS file
+- **Separation of concerns** between modal behavior and form presentation
+
 ## ✅ **Checklist for New/Refactored Components**
 
 - [ ] Component is under 300 lines
@@ -702,11 +795,14 @@ import { Button } from '../components/Button';
 - [ ] Complex components extract to separate files in folders
 - [ ] Components with separate files organized in folders
 - [ ] Components with CSS files organized in folders for encapsulation
+- [ ] Components without CSS files kept as single files when appropriate
+- [ ] CSS file decision based on styling complexity, not just component complexity
 - [ ] Folder names use PascalCase
 - [ ] Each folder has an `index.ts` file for exports
 - [ ] Main component is the default export
 - [ ] Sub-components are exported for reuse if needed
 - [ ] Import paths are clean and consistent
+- [ ] Mixed approach used where some components have CSS and others don't
 
 ## 🚀 **Next Steps**
 

@@ -5,27 +5,20 @@ import {
     DialogContent,
     DialogActions,
     Button,
-    TextField,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
     Box,
     Typography,
     Tabs,
     Tab,
-    Chip,
-    Checkbox,
-    FormControlLabel,
-    Divider,
     Alert,
     CircularProgress,
-    Grid,
 } from '@mui/material';
 import { Add as AddIcon, Person as PersonIcon, Payment as PaymentIcon } from '@mui/icons-material';
-import type { Group, User, PaymentCategory } from '../../database';
-import { userService, groupService, paymentService, balanceService } from '../../services';
-
+import type { Group, User, PaymentCategory } from '../../../database';
+import { userService, groupService, paymentService, balanceService } from '../../../services';
+import TabPanel from './TabPanel';
+import UserForm from './UserForm';
+import PaymentForm from './PaymentForm';
+import './AddDataModal.css';
 
 interface AddDataModalProps {
     isOpen: boolean;
@@ -33,28 +26,6 @@ interface AddDataModalProps {
     onDataAdded: () => void;
     group: Group;
     existingUsers: User[];
-}
-
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`add-data-tabpanel-${index}`}
-            aria-labelledby={`add-data-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box sx={{ py: 2 }}>{children}</Box>}
-        </div>
-    );
 }
 
 const AddDataModal: React.FC<AddDataModalProps> = ({
@@ -283,26 +254,26 @@ const AddDataModal: React.FC<AddDataModalProps> = ({
             maxWidth="md"
             fullWidth
             PaperProps={{
-                sx: { borderRadius: 2 },
+                className: "add-data-modal-dialog"
             }}
         >
             <DialogTitle>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <AddIcon sx={{ color: 'primary.main' }} />
+                <Box className="add-data-modal-title">
+                    <AddIcon className="add-data-modal-title-icon" />
                     <Typography variant="h6" component="h2">
                         Add Data to {group.name}
                     </Typography>
                 </Box>
             </DialogTitle>
 
-            <DialogContent>
+            <DialogContent className="add-data-modal-content">
                 {error && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
+                    <Alert severity="error" className="add-data-modal-error">
                         {error}
                     </Alert>
                 )}
 
-                <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 2 }}>
+                <Tabs value={activeTab} onChange={handleTabChange} className="add-data-modal-tabs">
                     <Tab
                         icon={<PersonIcon />}
                         label="Add User"
@@ -317,137 +288,26 @@ const AddDataModal: React.FC<AddDataModalProps> = ({
 
                 {/* Add User Tab */}
                 <TabPanel value={activeTab} index={0}>
-                    <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                        Add a new user to this group
-                    </Typography>
-
-                    <TextField
-                        fullWidth
-                        label="Name"
-                        value={userForm.name}
-                        onChange={(e) => handleUserFormChange('name', e.target.value)}
-                        sx={{ mb: 2 }}
-                        placeholder="Enter user's full name"
-                    />
-
-                    <TextField
-                        fullWidth
-                        label="Email"
-                        type="email"
-                        value={userForm.email}
-                        onChange={(e) => handleUserFormChange('email', e.target.value)}
-                        placeholder="Enter user's email address"
+                    <UserForm
+                        userForm={userForm}
+                        onFormChange={handleUserFormChange}
                     />
                 </TabPanel>
 
                 {/* Add Payment Tab */}
                 <TabPanel value={activeTab} index={1}>
-                    <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                        Create a new payment statement
-                    </Typography>
-
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                            <TextField
-                                fullWidth
-                                label="Description"
-                                value={paymentForm.description}
-                                onChange={(e) => handlePaymentFormChange('description', e.target.value)}
-                                sx={{ mb: 2 }}
-                                placeholder="e.g., Grocery shopping, Dinner, etc."
-                            />
-
-                            <TextField
-                                fullWidth
-                                label="Amount"
-                                type="number"
-                                value={paymentForm.amount}
-                                onChange={(e) => handlePaymentFormChange('amount', e.target.value)}
-                                sx={{ mb: 2 }}
-                                placeholder="0.00"
-                                inputProps={{ step: "0.01", min: "0" }}
-                            />
-
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel>Category</InputLabel>
-                                <Select
-                                    value={paymentForm.category}
-                                    label="Category"
-                                    onChange={(e) => handlePaymentFormChange('category', e.target.value)}
-                                >
-                                    {paymentCategories.map((category) => (
-                                        <MenuItem key={category} value={category}>
-                                            {category.charAt(0).toUpperCase() + category.slice(1)}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-
-                            <FormControl fullWidth sx={{ mb: 2 }}>
-                                <InputLabel>Paid By</InputLabel>
-                                <Select
-                                    value={paymentForm.paidBy}
-                                    label="Paid By"
-                                    onChange={(e) => handlePaymentFormChange('paidBy', e.target.value)}
-                                >
-                                    {existingUsers.map((user) => (
-                                        <MenuItem key={user.id} value={user.id}>
-                                            {user.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid item xs={12} md={6}>
-                            <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
-                                Select Participants & Set Shares
-                            </Typography>
-
-                            <Box sx={{ maxHeight: 300, overflowY: 'auto' }}>
-                                {existingUsers.map((user) => (
-                                    <Box key={user.id} sx={{ mb: 2 }}>
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox
-                                                    checked={paymentForm.participants.includes(user.id)}
-                                                    onChange={() => handleParticipantToggle(user.id)}
-                                                />
-                                            }
-                                            label={user.name}
-                                        />
-
-                                        {paymentForm.participants.includes(user.id) && (
-                                            <TextField
-                                                size="small"
-                                                label="Share Amount"
-                                                type="number"
-                                                value={paymentForm.participantShares[user.id] || ''}
-                                                onChange={(e) => handleShareChange(user.id, e.target.value)}
-                                                sx={{ ml: 4, width: 120 }}
-                                                placeholder="0.00"
-                                                inputProps={{ step: "0.01", min: "0" }}
-                                            />
-                                        )}
-                                    </Box>
-                                ))}
-                            </Box>
-
-                            {paymentForm.participants.length > 0 && (
-                                <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
-                                    <Typography variant="caption" color="text.secondary">
-                                        Total shares: {paymentForm.participants.reduce((sum, userId) =>
-                                            sum + parseFloat(paymentForm.participantShares[userId] || '0'), 0
-                                        ).toFixed(2)}
-                                    </Typography>
-                                </Box>
-                            )}
-                        </Grid>
-                    </Grid>
+                    <PaymentForm
+                        paymentForm={paymentForm}
+                        existingUsers={existingUsers}
+                        paymentCategories={paymentCategories}
+                        onFormChange={handlePaymentFormChange}
+                        onParticipantToggle={handleParticipantToggle}
+                        onShareChange={handleShareChange}
+                    />
                 </TabPanel>
             </DialogContent>
 
-            <DialogActions sx={{ p: 3, pt: 1 }}>
+            <DialogActions className="add-data-modal-actions">
                 <Button onClick={handleClose} disabled={isSubmitting}>
                     Cancel
                 </Button>

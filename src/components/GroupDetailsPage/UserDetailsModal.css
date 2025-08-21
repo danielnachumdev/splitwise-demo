@@ -1,0 +1,174 @@
+/* UserDetailsModal Component Styles */
+
+.user-details-modal-dialog {
+    border-radius: 16px;
+}
+
+.user-details-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-details-modal-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+}
+
+.user-details-modal-title-content {
+    flex-grow: 1;
+}
+
+.user-details-modal-title-name {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.user-details-modal-title-email {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.user-details-modal-close-button {
+    min-width: auto;
+    padding: 8px;
+}
+
+.user-details-modal-content {
+    padding: 24px;
+}
+
+.user-details-balance-summary {
+    padding: 24px;
+    margin-bottom: 24px;
+    background-color: #fafafa;
+}
+
+.user-details-balance-title {
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.user-details-balance-grid {
+    margin-bottom: 16px;
+}
+
+.user-details-balance-item {
+    text-align: center;
+}
+
+.user-details-balance-amount {
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.user-details-balance-amount-success {
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+.user-details-balance-amount-error {
+    font-weight: bold;
+    color: #d32f2f;
+}
+
+.user-details-balance-label {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.user-details-balance-chip {
+    text-align: center;
+}
+
+.user-details-section {
+    margin-bottom: 24px;
+}
+
+.user-details-section-title {
+    margin-bottom: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.user-details-section-title-icon {
+    margin-right: 8px;
+    color: #2e7d32;
+}
+
+.user-details-section-title-success {
+    color: #2e7d32;
+}
+
+.user-details-section-title-error {
+    color: #d32f2f;
+}
+
+.user-details-section-description {
+    margin-bottom: 16px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.user-details-payment-item {
+    background-color: #e8f5e8;
+    margin-bottom: 8px;
+    border-radius: 8px;
+}
+
+.user-details-payment-item-owed {
+    background-color: #e8f5e8;
+}
+
+.user-details-payment-item-owes {
+    background-color: #ffebee;
+}
+
+.user-details-payment-avatar {
+    width: 32px;
+    height: 32px;
+}
+
+.user-details-payment-avatar-success {
+    background-color: #2e7d32;
+}
+
+.user-details-payment-avatar-error {
+    background-color: #d32f2f;
+}
+
+.user-details-payment-amount {
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+.user-details-payment-amount-owed {
+    color: #2e7d32;
+}
+
+.user-details-payment-amount-owes {
+    color: #d32f2f;
+}
+
+.user-details-payment-right {
+    text-align: right;
+}
+
+.user-details-payment-percentage {
+    font-weight: bold;
+    color: #1976d2;
+}
+
+.user-details-empty-state {
+    text-align: center;
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+.user-details-empty-text {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.user-details-modal-actions {
+    padding: 24px;
+    padding-top: 8px;
+}

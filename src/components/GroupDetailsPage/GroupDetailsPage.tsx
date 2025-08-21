@@ -9,7 +9,6 @@ import {
     Button,
     CircularProgress,
     Alert,
-    Divider,
     Chip,
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material';
@@ -17,9 +16,10 @@ import type { Group, User, Payment, PaymentParticipant, UserBalance } from '../.
 import { groupService, userService, paymentService, balanceService } from '../../services';
 import UserCard from './UserCard';
 import PaymentCard from './PaymentCard';
-import AddDataModal from './AddDataModal';
+import { AddDataModal } from './AddDataModal';
 import UserDetailsModal from './UserDetailsModal';
 import PaymentDetailsModal from './PaymentDetailsModal';
+import './GroupDetailsPage.css';
 
 const GroupDetailsPage: React.FC = () => {
     const { groupId } = useParams<{ groupId: string }>();
@@ -29,20 +29,11 @@ const GroupDetailsPage: React.FC = () => {
     const [payments, setPayments] = useState<Payment[]>([]);
     const [paymentParticipants, setPaymentParticipants] = useState<PaymentParticipant[]>([]);
     const [userBalances, setUserBalances] = useState<UserBalance[]>([]);
-    // Note: debtBreakdown functionality will be implemented later
-    // const [debtBreakdown, setDebtBreakdown] = useState<Array<{
-    //     fromUserId: string;
-    //     toUserId: string;
-    //     amount: number;
-    //     description: string;
-    // }>>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddDataModal, setShowAddDataModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
-
-    // Services are imported directly
 
     useEffect(() => {
         if (groupId) {
@@ -89,10 +80,6 @@ const GroupDetailsPage: React.FC = () => {
             const groupBalances = balances.filter(balance => balance.groupId === groupId);
             setUserBalances(groupBalances);
 
-            // Load debt breakdown
-            // Note: This method is not yet implemented in BalanceService
-            // setDebtBreakdown(debtData);
-
         } catch (error) {
             setError('Failed to load group data');
             console.error('Error loading group data:', error);
@@ -126,7 +113,6 @@ const GroupDetailsPage: React.FC = () => {
     };
 
     const handleDataAdded = async () => {
-        // Refresh all data after adding new data
         await loadGroupData();
         setShowAddDataModal(false);
     };
@@ -149,17 +135,9 @@ const GroupDetailsPage: React.FC = () => {
 
     if (loading) {
         return (
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: 'grey.50',
-                }}
-            >
-                <Box sx={{ textAlign: 'center' }}>
-                    <CircularProgress size={48} sx={{ mb: 2 }} />
+            <Box className="group-details-loading">
+                <Box className="group-details-loading-content">
+                    <CircularProgress size={48} className="group-details-loading-spinner" />
                     <Typography variant="body1" color="text.secondary">
                         Loading group details...
                     </Typography>
@@ -186,12 +164,12 @@ const GroupDetailsPage: React.FC = () => {
     }
 
     return (
-        <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+        <Box className="group-details-page">
             {/* Header */}
-            <Paper elevation={1} sx={{ mb: 3 }}>
+            <Paper elevation={1} className="group-details-header">
                 <Container maxWidth="lg">
-                    <Box sx={{ py: 3 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                    <Box className="group-details-header-content">
+                        <Box className="group-details-header-actions">
                             <Button
                                 variant="outlined"
                                 startIcon={<ArrowBackIcon />}
@@ -209,12 +187,12 @@ const GroupDetailsPage: React.FC = () => {
                             </Button>
                         </Box>
 
-                        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        <Typography variant="h4" component="h1" className="group-details-title">
                             {group.name}
                         </Typography>
 
                         {group.description && (
-                            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                            <Typography variant="body1" className="group-details-description">
                                 {group.description}
                             </Typography>
                         )}
@@ -223,6 +201,7 @@ const GroupDetailsPage: React.FC = () => {
                             label={`${getCurrencySymbol(group.currency)} ${group.currency}`}
                             color="primary"
                             variant="outlined"
+                            className="group-details-currency-chip"
                         />
                     </Box>
                 </Container>
@@ -232,8 +211,8 @@ const GroupDetailsPage: React.FC = () => {
                 <Grid container spacing={3}>
                     {/* Left Sidebar - Users */}
                     <Grid item xs={12} md={4}>
-                        <Paper sx={{ p: 3, mb: 3 }}>
-                            <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 600 }}>
+                        <Paper className="group-details-sidebar-content">
+                            <Typography variant="h6" component="h2" className="group-details-sidebar-title">
                                 Group Members ({users.length})
                             </Typography>
 
@@ -258,14 +237,14 @@ const GroupDetailsPage: React.FC = () => {
                     {/* Main Content Section */}
                     <Grid item xs={12} md={8}>
                         {/* Payments Section */}
-                        <Paper sx={{ p: 3 }}>
-                            <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 600 }}>
+                        <Paper className="group-details-main-content">
+                            <Typography variant="h6" component="h2" className="group-details-main-title">
                                 Payment History ({payments.length})
                             </Typography>
 
                             {payments.length === 0 ? (
-                                <Box sx={{ textAlign: 'center', py: 4 }}>
-                                    <Typography variant="body2" color="text.secondary">
+                                <Box className="group-details-empty-state">
+                                    <Typography variant="body2" className="group-details-empty-text">
                                         No payments yet. Start adding expenses to see them here.
                                     </Typography>
                                 </Box>

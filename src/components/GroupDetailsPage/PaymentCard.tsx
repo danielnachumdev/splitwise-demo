@@ -8,6 +8,7 @@ import {
   Avatar,
 } from '@mui/material';
 import type { Payment, User } from '../../database';
+import './PaymentCard.css';
 
 interface PaymentCardProps {
   payment: Payment;
@@ -37,56 +38,42 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ payment, paidByUser, currency
   };
 
   return (
-    <Card
-      sx={{
-        cursor: 'pointer',
-        transition: 'all 0.2s ease-in-out',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: 3,
-        },
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-      onClick={onClick}
-    >
-      <CardContent sx={{ flexGrow: 1, p: 2 }}>
+    <Card onClick={onClick} className="payment-card">
+      <CardContent className="payment-card-content">
         {/* Payment Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h6" component="h3" sx={{ fontWeight: 600, mb: 1 }}>
+        <Box className="payment-card-header">
+          <Box className="payment-card-info">
+            <Typography variant="h6" component="h3" className="payment-card-description">
               {payment.description}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            <Typography variant="body2" className="payment-card-payer">
               Paid by {paidByUser?.name || 'Unknown User'}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" className="payment-card-date">
               {formatDate(payment.date)}
             </Typography>
           </Box>
-
-          <Typography variant="h5" component="span" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+          <Typography variant="h5" component="span" className="payment-card-amount">
             {getCurrencySymbol(currency)}{payment.amount.toFixed(2)}
           </Typography>
         </Box>
 
         {/* Category and Status */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box className="payment-card-footer">
           {payment.category && (
             <Chip
               label={payment.category.charAt(0).toUpperCase() + payment.category.slice(1)}
               size="small"
               variant="outlined"
-              sx={{ fontSize: '0.7rem' }}
+              className="payment-card-category"
             />
           )}
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar sx={{ width: 24, height: 24, fontSize: '0.7rem' }}>
+          <Box className="payment-card-actions">
+            <Avatar className="payment-card-avatar">
               {paidByUser?.name.charAt(0).toUpperCase() || '?'}
             </Avatar>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" className="payment-card-hint">
               Click for details
             </Typography>
           </Box>

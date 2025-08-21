@@ -1,0 +1,84 @@
+/* AddDataModal Component Styles */
+
+.add-data-modal-dialog {
+    border-radius: 16px;
+}
+
+.add-data-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.add-data-modal-title-icon {
+    color: #1976d2;
+}
+
+.add-data-modal-content {
+    padding: 24px;
+}
+
+.add-data-modal-error {
+    margin-bottom: 16px;
+}
+
+.add-data-modal-tabs {
+    margin-bottom: 16px;
+}
+
+.add-data-tabpanel {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.add-data-tabpanel-content {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+.add-data-subtitle {
+    margin-bottom: 16px;
+}
+
+.add-data-form-field {
+    margin-bottom: 16px;
+}
+
+.add-data-form-field-half {
+    margin-bottom: 16px;
+}
+
+.add-data-participants-section {
+    margin-bottom: 16px;
+}
+
+.add-data-participants-title {
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.add-data-participants-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.add-data-participant-item {
+    margin-bottom: 16px;
+}
+
+.add-data-participant-share {
+    margin-left: 32px;
+    width: 120px;
+}
+
+.add-data-total-shares {
+    margin-top: 16px;
+    padding: 16px;
+    background-color: #fafafa;
+    border-radius: 8px;
+}
+
+.add-data-modal-actions {
+    padding: 24px;
+    padding-top: 8px;
+}
