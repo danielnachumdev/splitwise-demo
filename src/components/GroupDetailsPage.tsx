@@ -20,7 +20,6 @@ import PaymentCard from './PaymentCard';
 import AddDataModal from './AddDataModal';
 import UserDetailsModal from './UserDetailsModal';
 import PaymentDetailsModal from './PaymentDetailsModal';
-import DebtBreakdown from './DebtBreakdown';
 
 const GroupDetailsPage: React.FC = () => {
     const { groupId } = useParams<{ groupId: string }>();
@@ -255,18 +254,6 @@ const GroupDetailsPage: React.FC = () => {
 
                     {/* Main Content Section */}
                     <Grid item xs={12} md={8}>
-                        {/* Debt Breakdown Section */}
-                        <Paper sx={{ p: 3, mb: 3 }}>
-                            <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 600 }}>
-                                Settlement Summary
-                            </Typography>
-                            <DebtBreakdown
-                                debtBreakdown={debtBreakdown}
-                                users={users}
-                                currency={group.currency}
-                            />
-                        </Paper>
-
                         {/* Payments Section */}
                         <Paper sx={{ p: 3 }}>
                             <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 600 }}>
@@ -322,6 +309,7 @@ const GroupDetailsPage: React.FC = () => {
                     payments={payments}
                     paymentParticipants={paymentParticipants}
                     currency={group.currency}
+                    users={users}
                 />
             )}
 

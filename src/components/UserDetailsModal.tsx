@@ -28,6 +28,7 @@ interface UserDetailsModalProps {
   payments: Payment[];
   paymentParticipants: PaymentParticipant[];
   currency: string;
+  users: User[]; // Added users prop
 }
 
 const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
@@ -38,6 +39,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   payments,
   paymentParticipants,
   currency,
+  users, // Destructure users
 }) => {
   const getCurrencySymbol = (currencyCode: string): string => {
     const symbols: Record<string, string> = {
@@ -77,18 +79,19 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
 
   // Get payments made by this user
   const paymentsMade = payments.filter(p => p.paidBy === user.id);
-  
+
   // Get payments this user participated in
   const userParticipations = paymentParticipants.filter(pp => {
     const payment = payments.find(p => p.id === pp.paymentId);
     return payment && pp.userId === user.id;
   });
 
-  // Get debts owed to this user
+  // Get debts owed to this user (payments they made for others)
   const debtsOwedToUser = userParticipations
     .filter(pp => {
       const payment = payments.find(p => p.id === pp.paymentId);
-      return payment && payment.paidBy !== user.id;
+      // Only include if this user made the payment (they're the payer)
+      return payment && payment.paidBy === user.id && pp.userId !== user.id;
     })
     .map(pp => {
       const payment = payments.find(p => p.id === pp.paymentId)!;
@@ -96,13 +99,15 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         payment,
         share: pp.share,
         isPaid: pp.isPaid,
+        debtorId: pp.userId, // The person who owes money
       };
     });
 
-  // Get debts this user owes
+  // Get debts this user owes (payments others made for them)
   const debtsUserOwes = userParticipations
     .filter(pp => {
       const payment = payments.find(p => p.id === pp.paymentId);
+      // Only include if someone else made the payment (they're not the payer)
       return payment && payment.paidBy !== user.id;
     })
     .map(pp => {
@@ -111,6 +116,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         payment,
         share: pp.share,
         isPaid: pp.isPaid,
+        creditorId: payment.paidBy, // The person who paid on their behalf
       };
     });
 
@@ -185,13 +191,13 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                 </Box>
               </Grid>
             </Grid>
-            
+
             <Box sx={{ mt: 2, textAlign: 'center' }}>
               <Chip
                 label={getBalanceText(balance.balance)}
                 color={getBalanceColor(balance.balance)}
                 variant="outlined"
-                size="large"
+                size="medium"
               />
             </Box>
           </Paper>
@@ -231,31 +237,37 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
             <Typography variant="h6" component="h3" sx={{ mb: 2, fontWeight: 600, color: 'success.main' }}>
               Money Owed to {user.name}
             </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              {user.name} paid for these expenses and others owe them money:
+            </Typography>
             <List dense>
-              {debtsOwedToUser.map(({ payment, share, isPaid }) => (
-                <ListItem key={payment.id} sx={{ bgcolor: 'success.50', mb: 1, borderRadius: 1 }}>
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: 'success.main', width: 32, height: 32 }}>
-                      {payment.description.charAt(0).toUpperCase()}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={payment.description}
-                    secondary={`Paid by ${payments.find(p => p.id === payment.id)?.paidBy || 'Unknown'} • ${formatDate(payment.date)}`}
-                  />
-                  <Box sx={{ textAlign: 'right' }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                      {formatAmount(share)}
-                    </Typography>
-                    <Chip
-                      label={isPaid ? 'Paid' : 'Pending'}
-                      size="small"
-                      color={isPaid ? 'success' : 'warning'}
-                      variant="outlined"
+              {debtsOwedToUser.map(({ payment, share, isPaid, debtorId }) => {
+                const debtor = users.find(u => u.id === debtorId);
+                return (
+                  <ListItem key={`${payment.id}-${debtorId}`} sx={{ bgcolor: 'success.50', mb: 1, borderRadius: 1 }}>
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: 'success.main', width: 32, height: 32 }}>
+                        {payment.description.charAt(0).toUpperCase()}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={`${payment.description}, ${formatAmount(share)}, ${debtor?.name || 'Unknown User'}`}
+                      secondary={`${formatDate(payment.date)} • ${payment.category || 'No category'}`}
                     />
-                  </Box>
-                </ListItem>
-              ))}
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                        {formatAmount(share)}
+                      </Typography>
+                      <Chip
+                        label={isPaid ? 'Paid' : 'Pending'}
+                        size="small"
+                        color={isPaid ? 'success' : 'warning'}
+                        variant="outlined"
+                      />
+                    </Box>
+                  </ListItem>
+                );
+              })}
             </List>
           </Box>
         )}
@@ -266,31 +278,37 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
             <Typography variant="h6" component="h3" sx={{ mb: 2, fontWeight: 600, color: 'error.main' }}>
               Money {user.name} Owes
             </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Others paid for these expenses on {user.name}'s behalf:
+            </Typography>
             <List dense>
-              {debtsUserOwes.map(({ payment, share, isPaid }) => (
-                <ListItem key={payment.id} sx={{ bgcolor: 'error.50', mb: 1, borderRadius: 1 }}>
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: 'error.main', width: 32, height: 32 }}>
-                      {payment.description.charAt(0).toUpperCase()}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={payment.description}
-                    secondary={`Paid by ${payments.find(p => p.id === payment.id)?.paidBy || 'Unknown'} • ${formatDate(payment.date)}`}
-                  />
-                  <Box sx={{ textAlign: 'right' }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'error.main' }}>
-                      {formatAmount(share)}
-                    </Typography>
-                    <Chip
-                      label={isPaid ? 'Paid' : 'Pending'}
-                      size="small"
-                      color={isPaid ? 'success' : 'warning'}
-                      variant="outlined"
+              {debtsUserOwes.map(({ payment, share, isPaid, creditorId }) => {
+                const creditor = users.find(u => u.id === creditorId);
+                return (
+                  <ListItem key={`${payment.id}-${creditorId}`} sx={{ bgcolor: 'error.50', mb: 1, borderRadius: 1 }}>
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: 'error.main', width: 32, height: 32 }}>
+                        {payment.description.charAt(0).toUpperCase()}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={payment.description}
+                      secondary={`Paid by ${creditor?.name || 'Unknown User'} • ${formatDate(payment.date)}`}
                     />
-                  </Box>
-                </ListItem>
-              ))}
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'error.main' }}>
+                        {formatAmount(share)}
+                      </Typography>
+                      <Chip
+                        label={isPaid ? 'Paid' : 'Pending'}
+                        size="small"
+                        color={isPaid ? 'success' : 'warning'}
+                        variant="outlined"
+                      />
+                    </Box>
+                  </ListItem>
+                );
+              })}
             </List>
           </Box>
         )}
