@@ -81,13 +81,16 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   const paymentsMade = payments.filter(p => p.paidBy === user.id);
 
   // Get payments this user participated in
-  const userParticipations = paymentParticipants.filter(pp => {
+  const userParticipationsForCurrent = paymentParticipants.filter(pp => {
     const payment = payments.find(p => p.id === pp.paymentId);
     return payment && pp.userId === user.id;
   });
-
+  const userParticipationsByCurrent = paymentParticipants.filter(pp => {
+    const payment = payments.find(p => p.id === pp.paymentId);
+    return payment && payment?.paidBy == user.id;
+  });
   // Get debts owed to this user (payments they made for others)
-  const debtsOwedToUser = userParticipations
+  const debtsOwedToUser = userParticipationsByCurrent
     .filter(pp => {
       const payment = payments.find(p => p.id === pp.paymentId);
       // Only include if this user made the payment (they're the payer)
@@ -102,9 +105,8 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         debtorId: pp.userId, // The person who owes money
       };
     });
-
   // Get debts this user owes (payments others made for them)
-  const debtsUserOwes = userParticipations
+  const debtsUserOwes = userParticipationsForCurrent
     .filter(pp => {
       const payment = payments.find(p => p.id === pp.paymentId);
       // Only include if someone else made the payment (they're not the payer)
@@ -256,7 +258,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                     />
                     <Box sx={{ textAlign: 'right' }}>
                       <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                        {formatAmount(share)}
+                        {formatAmount(share)} / {formatAmount(payment.amount)} (%{share / payment.amount * 100})
                       </Typography>
                       <Chip
                         label={isPaid ? 'Paid' : 'Pending'}
@@ -297,7 +299,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
                     />
                     <Box sx={{ textAlign: 'right' }}>
                       <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'error.main' }}>
-                        {formatAmount(share)}
+                        {formatAmount(share)} / {formatAmount(payment.amount)} (%{share / payment.amount * 100})
                       </Typography>
                       <Chip
                         label={isPaid ? 'Paid' : 'Pending'}
