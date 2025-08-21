@@ -1,0 +1,81 @@
+/* MembersPanel Component Styles */
+
+.members-panel {
+    height: 100%;
+    padding: 28px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.members-panel-title {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f5f5f5;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.members-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.members-panel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.members-panel-item {
+    width: 100%;
+}
+
+/* Scrollbar styling */
+.members-panel-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.members-panel-content::-webkit-scrollbar-track {
+    background: #f8f8f8;
+    border-radius: 4px;
+}
+
+.members-panel-content::-webkit-scrollbar-thumb {
+    background: #d0d0d0;
+    border-radius: 4px;
+}
+
+.members-panel-content::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .members-panel {
+        padding: 20px;
+        height: auto;
+        min-height: auto;
+    }
+
+    .members-panel-title {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .members-panel-content {
+        max-height: none;
+    }
+
+    .members-panel-list {
+        gap: 12px;
+    }
+}

@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from '@mui/icons-material';
 import type { User, UserBalance, Payment, PaymentParticipant } from '../../database';
+import { formatDate, getCurrencySymbol } from '../../utils';
 
 interface UserDetailsModalProps {
   isOpen: boolean;
@@ -41,17 +42,6 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
   currency,
   users, // Destructure users
 }) => {
-  const getCurrencySymbol = (currencyCode: string): string => {
-    const symbols: Record<string, string> = {
-      'USD': '$',
-      'EUR': '€',
-      'GBP': '£',
-      'CAD': 'C$',
-      'AUD': 'A$',
-      'JPY': '¥',
-    };
-    return symbols[currencyCode] || currencyCode;
-  };
 
   const getBalanceColor = (balanceAmount: number): 'success' | 'error' | 'default' => {
     if (balanceAmount > 0) return 'success';
@@ -69,13 +59,7 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
     return `${getCurrencySymbol(currency)}${amount.toFixed(2)}`;
   };
 
-  const formatDate = (date: Date): string => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+
 
   // Get payments made by this user
   const paymentsMade = payments.filter(p => p.paidBy === user.id);

@@ -1,85 +1,64 @@
-/* GroupDetailsPage Component Styles */
-
 .group-details-page {
     min-height: 100vh;
-    background-color: #fafafa;
+    background-color: #f5f5f5;
 }
 
-.group-details-loading {
-    min-height: 100vh;
+.group-details-content {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fafafa;
-}
-
-.group-details-loading-content {
-    text-align: center;
-}
-
-.group-details-loading-spinner {
-    margin-bottom: 16px;
-}
-
-.group-details-header {
-    margin-bottom: 24px;
-}
-
-.group-details-header-content {
-    padding-top: 24px;
-    padding-bottom: 24px;
-}
-
-.group-details-header-actions {
-    display: flex;
-    justify-content: space-between;
+    gap: 16px;
     align-items: flex-start;
-    margin-bottom: 16px;
-}
-
-.group-details-title {
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.group-details-description {
-    margin-bottom: 16px;
-    color: rgba(0, 0, 0, 0.6);
-}
-
-.group-details-currency-chip {
-    color: #1976d2;
-    border-color: #1976d2;
+    padding: 0;
+    margin: 0;
+    width: 100%;
 }
 
 .group-details-sidebar {
-    margin-bottom: 24px;
+    flex: 0 0 300px;
+    min-width: 300px;
+    margin-left: 0;
 }
 
-.group-details-sidebar-content {
-    padding: 24px;
+.group-details-main {
+    flex: 1;
+    min-width: 0;
+    margin-right: 0;
 }
 
-.group-details-sidebar-title {
-    margin-bottom: 24px;
-    font-weight: 600;
+.group-details-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
 }
 
-.group-details-main-content {
-    padding: 24px;
+.group-details-loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
 }
 
-.group-details-main-title {
-    margin-bottom: 24px;
-    font-weight: 600;
+.group-details-loading-spinner {
+    color: #1976d2;
 }
 
-.group-details-empty-state {
-    text-align: center;
-    padding-top: 32px;
-    padding-bottom: 32px;
-}
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .group-details-content {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+    }
 
-.group-details-empty-text {
-    color: rgba(0, 0, 0, 0.6);
+    .group-details-sidebar {
+        flex: none;
+        min-width: 100%;
+        width: 100%;
+    }
+
+    .group-details-main {
+        flex: none;
+        width: 100%;
+    }
 }

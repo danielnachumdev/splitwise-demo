@@ -4,19 +4,17 @@ import {
     Container,
     Typography,
     Box,
-    Paper,
-    Grid,
     Button,
     CircularProgress,
     Alert,
-    Chip,
 } from '@mui/material';
-import { ArrowBack as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import type { Group, User, Payment, PaymentParticipant, UserBalance } from '../../database';
 import { groupService, userService, paymentService, balanceService } from '../../services';
-import UserCard from './UserCard';
-import PaymentCard from './PaymentCard';
+import { MembersPanel } from './MembersPanel';
+import { PaymentsPanel } from './PaymentsPanel';
 import { AddDataModal } from './AddDataModal';
+import { PageHeader } from './PageHeader';
 import UserDetailsModal from './UserDetailsModal';
 import PaymentDetailsModal from './PaymentDetailsModal';
 import './GroupDetailsPage.css';
@@ -88,26 +86,6 @@ const GroupDetailsPage: React.FC = () => {
         }
     };
 
-    const getCurrencySymbol = (currencyCode: string): string => {
-        const symbols: Record<string, string> = {
-            'USD': '$',
-            'EUR': '€',
-            'GBP': '£',
-            'CAD': 'C$',
-            'AUD': 'A$',
-            'JPY': '¥',
-        };
-        return symbols[currencyCode] || currencyCode;
-    };
-
-    const getUserBalance = (userId: string): UserBalance | null => {
-        return userBalances.find(balance => balance.userId === userId) || null;
-    };
-
-    const getPaymentParticipants = (paymentId: string): PaymentParticipant[] => {
-        return paymentParticipants.filter(pp => pp.paymentId === paymentId);
-    };
-
     const handleAddData = () => {
         setShowAddDataModal(true);
     };
@@ -117,11 +95,11 @@ const GroupDetailsPage: React.FC = () => {
         setShowAddDataModal(false);
     };
 
-    const handleUserCardClick = (user: User) => {
+    const handleUserClick = (user: User) => {
         setSelectedUser(user);
     };
 
-    const handlePaymentCardClick = (payment: Payment) => {
+    const handlePaymentClick = (payment: Payment) => {
         setSelectedPayment(payment);
     };
 
@@ -131,6 +109,10 @@ const GroupDetailsPage: React.FC = () => {
 
     const handleClosePaymentModal = () => {
         setSelectedPayment(null);
+    };
+
+    const handleBackClick = () => {
+        navigate('/');
     };
 
     if (loading) {
@@ -166,109 +148,33 @@ const GroupDetailsPage: React.FC = () => {
     return (
         <Box className="group-details-page">
             {/* Header */}
-            <Paper elevation={1} className="group-details-header">
-                <Container maxWidth="lg">
-                    <Box className="group-details-header-content">
-                        <Box className="group-details-header-actions">
-                            <Button
-                                variant="outlined"
-                                startIcon={<ArrowBackIcon />}
-                                onClick={() => navigate('/')}
-                            >
-                                Back to Groups
-                            </Button>
+            <PageHeader
+                group={group}
+                onBackClick={handleBackClick}
+                onAddDataClick={handleAddData}
+            />
 
-                            <Button
-                                variant="contained"
-                                startIcon={<AddIcon />}
-                                onClick={handleAddData}
-                            >
-                                Add Data
-                            </Button>
-                        </Box>
+            <Box className="group-details-content">
+                {/* Left Sidebar - Users */}
+                <Box className="group-details-sidebar">
+                    <MembersPanel
+                        users={users}
+                        userBalances={userBalances}
+                        currency={group.currency}
+                        onUserClick={handleUserClick}
+                    />
+                </Box>
 
-                        <Typography variant="h4" component="h1" className="group-details-title">
-                            {group.name}
-                        </Typography>
-
-                        {group.description && (
-                            <Typography variant="body1" className="group-details-description">
-                                {group.description}
-                            </Typography>
-                        )}
-
-                        <Chip
-                            label={`${getCurrencySymbol(group.currency)} ${group.currency}`}
-                            color="primary"
-                            variant="outlined"
-                            className="group-details-currency-chip"
-                        />
-                    </Box>
-                </Container>
-            </Paper>
-
-            <Container maxWidth="lg">
-                <Grid container spacing={3}>
-                    {/* Left Sidebar - Users */}
-                    <Grid item xs={12} md={4}>
-                        <Paper className="group-details-sidebar-content">
-                            <Typography variant="h6" component="h2" className="group-details-sidebar-title">
-                                Group Members ({users.length})
-                            </Typography>
-
-                            <Grid container spacing={2}>
-                                {users.map((user) => {
-                                    const balance = getUserBalance(user.id);
-                                    return (
-                                        <Grid item xs={12} key={user.id}>
-                                            <UserCard
-                                                user={user}
-                                                balance={balance}
-                                                currency={group.currency}
-                                                onClick={() => handleUserCardClick(user)}
-                                            />
-                                        </Grid>
-                                    );
-                                })}
-                            </Grid>
-                        </Paper>
-                    </Grid>
-
-                    {/* Main Content Section */}
-                    <Grid item xs={12} md={8}>
-                        {/* Payments Section */}
-                        <Paper className="group-details-main-content">
-                            <Typography variant="h6" component="h2" className="group-details-main-title">
-                                Payment History ({payments.length})
-                            </Typography>
-
-                            {payments.length === 0 ? (
-                                <Box className="group-details-empty-state">
-                                    <Typography variant="body2" className="group-details-empty-text">
-                                        No payments yet. Start adding expenses to see them here.
-                                    </Typography>
-                                </Box>
-                            ) : (
-                                <Grid container spacing={2}>
-                                    {payments.map((payment) => {
-                                        const paidByUser = users.find(user => user.id === payment.paidBy);
-                                        return (
-                                            <Grid item xs={12} sm={6} key={payment.id}>
-                                                <PaymentCard
-                                                    payment={payment}
-                                                    paidByUser={paidByUser}
-                                                    currency={group.currency}
-                                                    onClick={() => handlePaymentCardClick(payment)}
-                                                />
-                                            </Grid>
-                                        );
-                                    })}
-                                </Grid>
-                            )}
-                        </Paper>
-                    </Grid>
-                </Grid>
-            </Container>
+                {/* Main Content Section */}
+                <Box className="group-details-main">
+                    <PaymentsPanel
+                        payments={payments}
+                        users={users}
+                        currency={group.currency}
+                        onPaymentClick={handlePaymentClick}
+                    />
+                </Box>
+            </Box>
 
             {/* Add Data Modal */}
             {showAddDataModal && (
@@ -287,7 +193,7 @@ const GroupDetailsPage: React.FC = () => {
                     isOpen={!!selectedUser}
                     onClose={handleCloseUserModal}
                     user={selectedUser}
-                    balance={getUserBalance(selectedUser.id)}
+                    balance={userBalances.find(b => b.userId === selectedUser.id) || null}
                     payments={payments}
                     paymentParticipants={paymentParticipants}
                     currency={group.currency}
@@ -301,7 +207,7 @@ const GroupDetailsPage: React.FC = () => {
                     isOpen={!!selectedPayment}
                     onClose={handleClosePaymentModal}
                     payment={selectedPayment}
-                    participants={getPaymentParticipants(selectedPayment.id)}
+                    participants={paymentParticipants.filter(pp => pp.paymentId === selectedPayment.id)}
                     users={users}
                     currency={group.currency}
                 />

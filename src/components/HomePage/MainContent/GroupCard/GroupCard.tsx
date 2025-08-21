@@ -10,32 +10,13 @@ import {
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
 import type { Group } from '../../../../database';
 import './GroupCard.css';
+import { formatDate, getCurrencySymbol } from '../../../../utils';
 
 interface GroupCardProps {
     group: Group;
     onClick: () => void;
 }
 
-// Utility functions extracted for better readability and testability
-const getCurrencySymbol = (currencyCode: string): string => {
-    const symbols: Record<string, string> = {
-        'USD': '$',
-        'EUR': '€',
-        'GBP': '£',
-        'CAD': 'C$',
-        'AUD': 'A$',
-        'JPY': '¥',
-    };
-    return symbols[currencyCode] || currencyCode;
-};
-
-const formatDate = (date: Date): string => {
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-};
 
 const GroupCard: React.FC<GroupCardProps> = ({ group, onClick }) => {
 

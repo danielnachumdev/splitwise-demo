@@ -1,0 +1,112 @@
+/* PaymentsPanel Component Styles */
+
+.payments-panel {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.payments-panel-title {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 24px 32px;
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.payments-panel-empty-state {
+    padding: 48px 32px;
+    text-align: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.payments-panel-empty-text {
+    color: #6c757d;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.payments-panel-content {
+    padding: 24px 32px 32px;
+}
+
+.payments-panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+.payments-panel-item {
+    /* Removed hover transform to keep panel static */
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .payments-panel-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+    }
+
+    .payments-panel-title {
+        padding: 20px 24px;
+        font-size: 1.3rem;
+    }
+
+    .payments-panel-content {
+        padding: 20px 24px 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .payments-panel {
+        border-radius: 12px;
+        margin: 0 16px;
+    }
+
+    .payments-panel-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .payments-panel-title {
+        padding: 18px 20px;
+        font-size: 1.2rem;
+    }
+
+    .payments-panel-content {
+        padding: 18px 20px 24px;
+    }
+
+    .payments-panel-empty-state {
+        padding: 36px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .payments-panel {
+        margin: 0 8px;
+        border-radius: 8px;
+    }
+
+    .payments-panel-title {
+        padding: 16px 18px;
+        font-size: 1.1rem;
+    }
+
+    .payments-panel-content {
+        padding: 16px 18px 20px;
+    }
+
+    .payments-panel-empty-state {
+        padding: 32px 18px;
+    }
+}

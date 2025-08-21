@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, Person as PersonIcon, CheckCircle as CheckCircleIcon, Pending as PendingIcon } from '@mui/icons-material';
 import type { Payment, PaymentParticipant, User } from '../../database';
+import { formatDate, getCurrencySymbol } from '../../utils';
 
 interface PaymentDetailsModalProps {
   isOpen: boolean;
@@ -37,27 +38,6 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
   users,
   currency,
 }) => {
-  const getCurrencySymbol = (currencyCode: string): string => {
-    const symbols: Record<string, string> = {
-      'USD': '$',
-      'EUR': '€',
-      'GBP': '£',
-      'CAD': 'C$',
-      'AUD': 'A$',
-      'JPY': '¥',
-    };
-    return symbols[currencyCode] || currencyCode;
-  };
-
-  const formatDate = (date: Date): string => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const formatAmount = (amount: number): string => {
     return `${getCurrencySymbol(currency)}${amount.toFixed(2)}`;
