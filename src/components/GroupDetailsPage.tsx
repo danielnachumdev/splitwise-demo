@@ -15,9 +15,11 @@ import {
 import { ArrowBack as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material';
 import type { Group, User, Payment, PaymentParticipant, UserBalance } from '../types';
 import localStorageService from '../services/localStorageService';
-import PaymentStatement from './PaymentStatement';
-import UserDisplay from './UserDisplay';
+import UserCard from './UserCard';
+import PaymentCard from './PaymentCard';
 import AddDataModal from './AddDataModal';
+import UserDetailsModal from './UserDetailsModal';
+import PaymentDetailsModal from './PaymentDetailsModal';
 import DebtBreakdown from './DebtBreakdown';
 
 const GroupDetailsPage: React.FC = () => {
@@ -37,6 +39,8 @@ const GroupDetailsPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddDataModal, setShowAddDataModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
 
     useEffect(() => {
         if (groupId) {
@@ -125,6 +129,22 @@ const GroupDetailsPage: React.FC = () => {
         setShowAddDataModal(false);
     };
 
+    const handleUserCardClick = (user: User) => {
+        setSelectedUser(user);
+    };
+
+    const handlePaymentCardClick = (payment: Payment) => {
+        setSelectedPayment(payment);
+    };
+
+    const handleCloseUserModal = () => {
+        setSelectedUser(null);
+    };
+
+    const handleClosePaymentModal = () => {
+        setSelectedPayment(null);
+    };
+
     if (loading) {
         return (
             <Box
@@ -208,26 +228,28 @@ const GroupDetailsPage: React.FC = () => {
 
             <Container maxWidth="lg">
                 <Grid container spacing={3}>
-                    {/* Group Members Section */}
+                    {/* Left Sidebar - Users */}
                     <Grid item xs={12} md={4}>
-                        <Paper sx={{ p: 3 }}>
-                            <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 600 }}>
+                        <Paper sx={{ p: 3, mb: 3 }}>
+                            <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 600 }}>
                                 Group Members ({users.length})
                             </Typography>
 
-                            <Box sx={{ mb: 3 }}>
+                            <Grid container spacing={2}>
                                 {users.map((user) => {
                                     const balance = getUserBalance(user.id);
                                     return (
-                                        <UserDisplay
-                                            key={user.id}
-                                            user={user}
-                                            balance={balance}
-                                            currency={group.currency}
-                                        />
+                                        <Grid item xs={12} key={user.id}>
+                                            <UserCard
+                                                user={user}
+                                                balance={balance}
+                                                currency={group.currency}
+                                                onClick={() => handleUserCardClick(user)}
+                                            />
+                                        </Grid>
                                     );
                                 })}
-                            </Box>
+                            </Grid>
                         </Paper>
                     </Grid>
 
@@ -247,7 +269,7 @@ const GroupDetailsPage: React.FC = () => {
 
                         {/* Payments Section */}
                         <Paper sx={{ p: 3 }}>
-                            <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 600 }}>
+                            <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 600 }}>
                                 Payment History ({payments.length})
                             </Typography>
 
@@ -258,17 +280,21 @@ const GroupDetailsPage: React.FC = () => {
                                     </Typography>
                                 </Box>
                             ) : (
-                                <Box>
-                                    {payments.map((payment) => (
-                                        <PaymentStatement
-                                            key={payment.id}
-                                            payment={payment}
-                                            participants={getPaymentParticipants(payment.id)}
-                                            users={users}
-                                            currency={group.currency}
-                                        />
-                                    ))}
-                                </Box>
+                                <Grid container spacing={2}>
+                                    {payments.map((payment) => {
+                                        const paidByUser = users.find(user => user.id === payment.paidBy);
+                                        return (
+                                            <Grid item xs={12} sm={6} key={payment.id}>
+                                                <PaymentCard
+                                                    payment={payment}
+                                                    paidByUser={paidByUser}
+                                                    currency={group.currency}
+                                                    onClick={() => handlePaymentCardClick(payment)}
+                                                />
+                                            </Grid>
+                                        );
+                                    })}
+                                </Grid>
                             )}
                         </Paper>
                     </Grid>
@@ -283,6 +309,31 @@ const GroupDetailsPage: React.FC = () => {
                     onDataAdded={handleDataAdded}
                     group={group}
                     existingUsers={users}
+                />
+            )}
+
+            {/* User Details Modal */}
+            {selectedUser && (
+                <UserDetailsModal
+                    isOpen={!!selectedUser}
+                    onClose={handleCloseUserModal}
+                    user={selectedUser}
+                    balance={getUserBalance(selectedUser.id)}
+                    payments={payments}
+                    paymentParticipants={paymentParticipants}
+                    currency={group.currency}
+                />
+            )}
+
+            {/* Payment Details Modal */}
+            {selectedPayment && (
+                <PaymentDetailsModal
+                    isOpen={!!selectedPayment}
+                    onClose={handleClosePaymentModal}
+                    payment={selectedPayment}
+                    participants={getPaymentParticipants(selectedPayment.id)}
+                    users={users}
+                    currency={group.currency}
                 />
             )}
         </Box>
