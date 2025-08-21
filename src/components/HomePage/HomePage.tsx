@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import type { Group, User } from '../../database';
-import { groupService } from '../../services';
+import { groupService, paymentService } from '../../services';
 import HomeHeader from './HomeHeader';
 import { MainContent } from './MainContent';
 import './HomePage.css';
@@ -48,6 +48,32 @@ const HomePage: React.FC = () => {
         navigate(`/group/${group.id}`);
     };
 
+    const handleDeleteGroup = async (groupId: string) => {
+        try {
+            // Get all payments for this group
+            const groupPayments = await paymentService.getPaymentsByGroupId(groupId);
+
+            // Delete all payments and their participants
+            for (const payment of groupPayments) {
+                // Note: In a real app, you might want to delete payment participants first
+                // depending on your database constraints
+                await paymentService.deletePayment(payment.id);
+            }
+
+            // Remove all users from the group
+            await groupService.removeUserFromGroup(DEMO_USER_ID, groupId);
+
+            // Delete the group itself
+            await groupService.deleteGroup(groupId);
+
+            // Reload groups to update the UI
+            await loadGroups();
+        } catch (error) {
+            setError('Failed to delete group');
+            console.error('Error deleting group:', error);
+        }
+    };
+
     // 4. HELPER FUNCTIONS (after handlers)
     const loadGroups = async () => {
         try {
@@ -85,6 +111,7 @@ const HomePage: React.FC = () => {
                 groups={groups}
                 onGroupClick={handleGroupClick}
                 onCreateGroup={handleCreateGroup}
+                onDeleteGroup={handleDeleteGroup}
             />
         </Box>
     );

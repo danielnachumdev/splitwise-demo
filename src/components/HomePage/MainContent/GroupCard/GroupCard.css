@@ -15,6 +15,11 @@
     /* primary.main */
 }
 
+.group-card:hover .group-chevron-button {
+    color: #1976d2;
+    /* primary.main */
+}
+
 .group-card-content {
     padding: 16px;
 }
@@ -49,14 +54,30 @@
     /* text.secondary */
 }
 
-.group-currency-chip {
+.group-delete-button {
     margin-left: 16px;
     flex-shrink: 0;
 }
 
-.currency-chip {
-    font-size: 0.75rem;
-    font-weight: 500;
+.delete-button {
+    color: rgba(0, 0, 0, 0.6);
+    /* text.secondary */
+    transition: color 0.2s ease-in-out;
+}
+
+.delete-button:hover {
+    color: #d32f2f;
+    /* error.main */
+    background-color: rgba(211, 47, 47, 0.04);
+}
+
+.group-menu {
+    margin-top: 8px;
+}
+
+.group-menu .MuiPaper-root {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
 }
 
 .group-card-footer {
@@ -74,9 +95,5 @@
 .group-chevron-button {
     color: rgba(0, 0, 0, 0.6);
     /* text.secondary */
-}
-
-.group-chevron-button:hover {
-    color: #1976d2;
-    /* primary.main */
+    transition: color 0.2s ease-in-out;
 }

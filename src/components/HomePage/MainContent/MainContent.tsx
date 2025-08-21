@@ -18,6 +18,7 @@ interface MainContentProps {
     groups: Group[];
     onGroupClick: (group: Group) => void;
     onCreateGroup: (groupData: { name: string; description: string; currency: string }) => Promise<void>;
+    onDeleteGroup: (groupId: string) => Promise<void>;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
@@ -25,6 +26,7 @@ const MainContent: React.FC<MainContentProps> = ({
     groups,
     onGroupClick,
     onCreateGroup,
+    onDeleteGroup,
 }) => {
     const [showCreateModal, setShowCreateModal] = React.useState(false);
 
@@ -88,6 +90,7 @@ const MainContent: React.FC<MainContentProps> = ({
                                     <GroupCard
                                         group={group}
                                         onClick={() => onGroupClick(group)}
+                                        onDelete={onDeleteGroup}
                                     />
                                 </Box>
                             ))}
