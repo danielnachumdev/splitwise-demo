@@ -1,0 +1,237 @@
+import type { User, Group, UserGroup, Payment, PaymentParticipant, UserBalance } from '../types';
+
+// LocalStorage keys for different entities
+const STORAGE_KEYS = {
+    USERS: 'splitwise_users',
+    GROUPS: 'splitwise_groups',
+    USER_GROUPS: 'splitwise_user_groups',
+    PAYMENTS: 'splitwise_payments',
+    PAYMENT_PARTICIPANTS: 'splitwise_payment_participants',
+    USER_BALANCES: 'splitwise_user_balances',
+} as const;
+
+// Generic localStorage service wrapper
+class LocalStorageService {
+    private getItem<T>(key: string): T[] {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : [];
+        } catch (error) {
+            console.error(`Error reading from localStorage key ${key}:`, error);
+            return [];
+        }
+    }
+
+    private setItem<T>(key: string, data: T[]): void {
+        try {
+            localStorage.setItem(key, JSON.stringify(data));
+        } catch (error) {
+            console.error(`Error writing to localStorage key ${key}:`, error);
+        }
+    }
+
+    private generateId(): string {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // User operations
+    async getUsers(): Promise<User[]> {
+        return this.getItem<User>(STORAGE_KEYS.USERS);
+    }
+
+    async getUserById(id: string): Promise<User | null> {
+        const users = await this.getUsers();
+        return users.find(user => user.id === id) || null;
+    }
+
+    async createUser(userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
+        const users = await this.getUsers();
+        const newUser: User = {
+            ...userData,
+            id: this.generateId(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        users.push(newUser);
+        this.setItem(STORAGE_KEYS.USERS, users);
+        return newUser;
+    }
+
+    async updateUser(id: string, updates: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User | null> {
+        const users = await this.getUsers();
+        const userIndex = users.findIndex(user => user.id === id);
+
+        if (userIndex === -1) return null;
+
+        users[userIndex] = {
+            ...users[userIndex],
+            ...updates,
+            updatedAt: new Date(),
+        };
+
+        this.setItem(STORAGE_KEYS.USERS, users);
+        return users[userIndex];
+    }
+
+    // Group operations
+    async getGroups(): Promise<Group[]> {
+        return this.getItem<Group>(STORAGE_KEYS.GROUPS);
+    }
+
+    async getGroupsByUserId(userId: string): Promise<Group[]> {
+        const userGroups = await this.getUserGroups();
+        const groupIds = userGroups
+            .filter(ug => ug.userId === userId && ug.isActive)
+            .map(ug => ug.groupId);
+
+        const allGroups = await this.getGroups();
+        return allGroups.filter(group => groupIds.includes(group.id));
+    }
+
+    async getGroupById(id: string): Promise<Group | null> {
+        const groups = await this.getGroups();
+        return groups.find(group => group.id === id) || null;
+    }
+
+    async createGroup(groupData: Omit<Group, 'id' | 'createdAt' | 'updatedAt'>): Promise<Group> {
+        const groups = await this.getGroups();
+        const newGroup: Group = {
+            ...groupData,
+            id: this.generateId(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        groups.push(newGroup);
+        this.setItem(STORAGE_KEYS.GROUPS, groups);
+        return newGroup;
+    }
+
+    // UserGroup operations
+    async getUserGroups(): Promise<UserGroup[]> {
+        return this.getItem<UserGroup>(STORAGE_KEYS.USER_GROUPS);
+    }
+
+    async addUserToGroup(userId: string, groupId: string, role: 'admin' | 'member' = 'member'): Promise<UserGroup> {
+        const userGroups = await this.getUserGroups();
+        const newUserGroup: UserGroup = {
+            id: this.generateId(),
+            userId,
+            groupId,
+            role,
+            joinedAt: new Date(),
+            isActive: true,
+        };
+
+        userGroups.push(newUserGroup);
+        this.setItem(STORAGE_KEYS.USER_GROUPS, userGroups);
+        return newUserGroup;
+    }
+
+    async removeUserFromGroup(userId: string, groupId: string): Promise<boolean> {
+        const userGroups = await this.getUserGroups();
+        const userGroupIndex = userGroups.findIndex(ug => ug.userId === userId && ug.groupId === groupId);
+
+        if (userGroupIndex === -1) return false;
+
+        userGroups[userGroupIndex].isActive = false;
+        this.setItem(STORAGE_KEYS.USER_GROUPS, userGroups);
+        return true;
+    }
+
+    // Payment operations
+    async getPayments(): Promise<Payment[]> {
+        return this.getItem<Payment>(STORAGE_KEYS.PAYMENTS);
+    }
+
+    async getPaymentsByGroupId(groupId: string): Promise<Payment[]> {
+        const payments = await this.getPayments();
+        return payments.filter(payment => payment.groupId === groupId);
+    }
+
+    async createPayment(paymentData: Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>): Promise<Payment> {
+        const payments = await this.getPayments();
+        const newPayment: Payment = {
+            ...paymentData,
+            id: this.generateId(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        payments.push(newPayment);
+        this.setItem(STORAGE_KEYS.PAYMENTS, payments);
+        return newPayment;
+    }
+
+    // PaymentParticipant operations
+    async getPaymentParticipants(): Promise<PaymentParticipant[]> {
+        return this.getItem<PaymentParticipant>(STORAGE_KEYS.PAYMENT_PARTICIPANTS);
+    }
+
+    async createPaymentParticipants(participants: Omit<PaymentParticipant, 'id'>[]): Promise<PaymentParticipant[]> {
+        const allParticipants = await this.getPaymentParticipants();
+        const newParticipants: PaymentParticipant[] = participants.map(participant => ({
+            ...participant,
+            id: this.generateId(),
+        }));
+
+        allParticipants.push(...newParticipants);
+        this.setItem(STORAGE_KEYS.PAYMENT_PARTICIPANTS, allParticipants);
+        return newParticipants;
+    }
+
+    // UserBalance operations
+    async getUserBalances(): Promise<UserBalance[]> {
+        return this.getItem<UserBalance>(STORAGE_KEYS.USER_BALANCES);
+    }
+
+    async getUserBalance(userId: string, groupId: string): Promise<UserBalance | null> {
+        const balances = await this.getUserBalances();
+        return balances.find(balance => balance.userId === userId && balance.groupId === groupId) || null;
+    }
+
+    async updateUserBalance(balanceData: Omit<UserBalance, 'id' | 'lastUpdated'>): Promise<UserBalance> {
+        const balances = await this.getUserBalances();
+        const existingBalanceIndex = balances.findIndex(
+            balance => balance.userId === balanceData.userId && balance.groupId === balanceData.groupId
+        );
+
+        const newBalance: UserBalance = {
+            ...balanceData,
+            id: existingBalanceIndex !== -1 ? balances[existingBalanceIndex].id : this.generateId(),
+            lastUpdated: new Date(),
+        };
+
+        if (existingBalanceIndex !== -1) {
+            balances[existingBalanceIndex] = newBalance;
+        } else {
+            balances.push(newBalance);
+        }
+
+        this.setItem(STORAGE_KEYS.USER_BALANCES, balances);
+        return newBalance;
+    }
+
+    // Utility methods
+    async clearAllData(): Promise<void> {
+        Object.values(STORAGE_KEYS).forEach(key => {
+            localStorage.removeItem(key);
+        });
+    }
+
+    async getDataSize(): Promise<number> {
+        let totalSize = 0;
+        Object.values(STORAGE_KEYS).forEach(key => {
+            const data = localStorage.getItem(key);
+            if (data) {
+                totalSize += new Blob([data]).size;
+            }
+        });
+        return totalSize;
+    }
+}
+
+// Export a singleton instance
+export const localStorageService = new LocalStorageService();
+export default localStorageService;
