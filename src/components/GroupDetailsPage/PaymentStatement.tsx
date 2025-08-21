@@ -11,7 +11,7 @@ import {
     ListItemText,
 } from '@mui/material';
 import { Person as PersonIcon } from '@mui/icons-material';
-import type { Payment, PaymentParticipant, User } from '../database';
+import type { Payment, PaymentParticipant, User } from '../../database';
 
 interface PaymentStatementProps {
     payment: Payment;

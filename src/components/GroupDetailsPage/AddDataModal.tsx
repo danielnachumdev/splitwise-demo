@@ -23,8 +23,8 @@ import {
     Grid,
 } from '@mui/material';
 import { Add as AddIcon, Person as PersonIcon, Payment as PaymentIcon } from '@mui/icons-material';
-import type { Group, User, PaymentCategory } from '../database';
-import { userService, groupService, paymentService, balanceService } from '../services';
+import type { Group, User, PaymentCategory } from '../../database';
+import { userService, groupService, paymentService, balanceService } from '../../services';
 
 
 interface AddDataModalProps {

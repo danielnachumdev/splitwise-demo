@@ -6,7 +6,7 @@ import {
     Chip,
     Divider,
 } from '@mui/material';
-import type { User, UserBalance } from '../database';
+import type { User, UserBalance } from '../../database';
 
 interface UserDisplayProps {
     user: User;

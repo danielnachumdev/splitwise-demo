@@ -18,7 +18,7 @@ import {
   Grid,
 } from '@mui/material';
 import { Close as CloseIcon, Person as PersonIcon, CheckCircle as CheckCircleIcon, Pending as PendingIcon } from '@mui/icons-material';
-import type { Payment, PaymentParticipant, User } from '../database';
+import type { Payment, PaymentParticipant, User } from '../../database';
 
 interface PaymentDetailsModalProps {
   isOpen: boolean;

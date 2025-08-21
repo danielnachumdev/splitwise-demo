@@ -13,8 +13,8 @@ import {
     Chip,
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon, Add as AddIcon } from '@mui/icons-material';
-import type { Group, User, Payment, PaymentParticipant, UserBalance } from '../database';
-import { groupService, userService, paymentService, balanceService } from '../services';
+import type { Group, User, Payment, PaymentParticipant, UserBalance } from '../../database';
+import { groupService, userService, paymentService, balanceService } from '../../services';
 import UserCard from './UserCard';
 import PaymentCard from './PaymentCard';
 import AddDataModal from './AddDataModal';

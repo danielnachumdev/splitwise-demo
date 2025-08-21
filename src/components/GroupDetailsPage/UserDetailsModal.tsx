@@ -18,7 +18,7 @@ import {
   Grid,
 } from '@mui/material';
 import { Close as CloseIcon, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from '@mui/icons-material';
-import type { User, UserBalance, Payment, PaymentParticipant } from '../database';
+import type { User, UserBalance, Payment, PaymentParticipant } from '../../database';
 
 interface UserDetailsModalProps {
   isOpen: boolean;

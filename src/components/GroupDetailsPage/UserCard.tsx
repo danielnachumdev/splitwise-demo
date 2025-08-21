@@ -7,7 +7,7 @@ import {
   Chip,
   Box,
 } from '@mui/material';
-import type { User, UserBalance } from '../database';
+import type { User, UserBalance } from '../../database';
 
 interface UserCardProps {
   user: User;

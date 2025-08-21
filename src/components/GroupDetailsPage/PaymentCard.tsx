@@ -7,7 +7,7 @@ import {
   Box,
   Avatar,
 } from '@mui/material';
-import type { Payment, User } from '../database';
+import type { Payment, User } from '../../database';
 
 interface PaymentCardProps {
   payment: Payment;

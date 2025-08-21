@@ -13,7 +13,7 @@ import {
     Alert,
 } from '@mui/material';
 import { TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from '@mui/icons-material';
-import type { User } from '../database';
+import type { User } from '../../database';
 
 interface DebtBreakdownProps {
     debtBreakdown: Array<{
