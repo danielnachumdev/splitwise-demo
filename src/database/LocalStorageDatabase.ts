@@ -1,4 +1,4 @@
-import type { Database, Entity } from './Database';
+import type { DomainDatabase, Database } from './Database';
 
 // Helper functions
 const generateId = (): string => {
@@ -24,7 +24,7 @@ const setItem = <T>(storageKey: string, data: T[]): void => {
 };
 
 // Factory function to create a database implementation
-export const createLocalStorageDatabase = <T extends Entity>(storageKey: string): Database<T> => ({
+const createLocalStorageDatabase = <T extends { id: string; createdAt?: Date; updatedAt?: Date }>(storageKey: string): DomainDatabase<T> => ({
     async getAll(): Promise<T[]> {
         return getItem<T>(storageKey);
     },
@@ -84,3 +84,23 @@ export const createLocalStorageDatabase = <T extends Entity>(storageKey: string)
         localStorage.removeItem(storageKey);
     }
 });
+
+// Storage keys for different entities
+const STORAGE_KEYS = {
+    USERS: 'splitwise_users',
+    GROUPS: 'splitwise_groups',
+    USER_GROUPS: 'splitwise_user_groups',
+    PAYMENTS: 'splitwise_payments',
+    PAYMENT_PARTICIPANTS: 'splitwise_payment_participants',
+    USER_BALANCES: 'splitwise_user_balances',
+} as const;
+
+// Create database service object
+export const localStorageDatabase: Database = {
+    users: createLocalStorageDatabase(STORAGE_KEYS.USERS),
+    groups: createLocalStorageDatabase(STORAGE_KEYS.GROUPS),
+    userGroups: createLocalStorageDatabase(STORAGE_KEYS.USER_GROUPS),
+    payments: createLocalStorageDatabase(STORAGE_KEYS.PAYMENTS),
+    paymentParticipants: createLocalStorageDatabase(STORAGE_KEYS.PAYMENT_PARTICIPANTS),
+    userBalances: createLocalStorageDatabase(STORAGE_KEYS.USER_BALANCES),
+};

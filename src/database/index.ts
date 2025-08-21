@@ -1,15 +1,18 @@
-// Export the main database service object for external use
-export { databaseService, clearAllData, getDataSize } from '../services/DatabaseService';
-
-// Export all types that might be needed by external consumers
+// Export all models
 export type {
-    Database,
-    Entity,
-    DatabaseService,
     User,
     Group,
     UserGroup,
     Payment,
     PaymentParticipant,
-    UserBalance
+    UserBalance,
+} from './models';
+
+// Export the database interface
+export type {
+    DomainDatabase,
+    Database
 } from './Database';
+
+// Export the localStorage database service
+export { localStorageDatabase } from './LocalStorageDatabase';
