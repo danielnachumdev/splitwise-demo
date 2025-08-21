@@ -1,5 +1,5 @@
 import { databaseService } from './DatabaseService';
-import type { User } from '../types';
+import type { User } from '../database';
 
 export const userService = {
     async getUsers(): Promise<User[]> {

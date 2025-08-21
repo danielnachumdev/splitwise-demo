@@ -13,8 +13,8 @@ import {
     Alert,
 } from '@mui/material';
 import { Add as AddIcon, Group as GroupIcon } from '@mui/icons-material';
-import type { Group, User } from '../types';
-import { userService, groupService, demoDataService } from '../services';
+import type { Group, User } from '../database';
+import { userService, groupService } from '../services';
 import CreateGroupModal from './CreateGroupModal';
 import GroupCard from './GroupCard';
 
@@ -33,37 +33,9 @@ const HomePage: React.FC = () => {
     // Services are imported directly
 
     useEffect(() => {
-        initializeDemoUser();
         loadGroups();
-        initializeDemoData();
     }, []);
 
-    const initializeDemoUser = async () => {
-        try {
-            // Check if demo user exists, if not create one
-            let user = await userService.getUserById(DEMO_USER_ID);
-            if (!user) {
-                user = await userService.createUser({
-                    name: 'Demo User',
-                    email: 'demo@example.com',
-                });
-            }
-            setCurrentUser(user);
-        } catch (error) {
-            setError('Failed to initialize demo user');
-            console.error('Error initializing demo user:', error);
-        }
-    };
-
-    const initializeDemoData = async () => {
-        try {
-            await demoDataService.initializeDemoData();
-            // Refresh groups after demo data is initialized
-            await loadGroups();
-        } catch (error) {
-            console.error('Error initializing demo data:', error);
-        }
-    };
 
     const loadGroups = async () => {
         try {

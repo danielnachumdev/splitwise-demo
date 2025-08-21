@@ -23,8 +23,9 @@ import {
     Grid,
 } from '@mui/material';
 import { Add as AddIcon, Person as PersonIcon, Payment as PaymentIcon } from '@mui/icons-material';
-import type { Group, User, PaymentCategory } from '../types';
-import localStorageService from '../services/localStorageService';
+import type { Group, User, PaymentCategory } from '../database';
+import { userService, groupService, paymentService, balanceService } from '../services';
+
 
 interface AddDataModalProps {
     isOpen: boolean;
@@ -184,13 +185,13 @@ const AddDataModal: React.FC<AddDataModalProps> = ({
 
         try {
             // Create new user
-            const newUser = await localStorageService.createUser({
+            const newUser = await userService.createUser({
                 name: userForm.name.trim(),
                 email: userForm.email.trim(),
             });
 
             // Add user to group
-            await localStorageService.addUserToGroup(newUser.id, group.id, 'member');
+            await groupService.addUserToGroup(newUser.id, group.id, 'member');
 
             // Reset form
             setUserForm({ name: '', email: '' });
@@ -215,7 +216,7 @@ const AddDataModal: React.FC<AddDataModalProps> = ({
             const amount = parseFloat(paymentForm.amount);
 
             // Create payment
-            const newPayment = await localStorageService.createPayment({
+            const newPayment = await paymentService.createPayment({
                 groupId: group.id,
                 paidBy: paymentForm.paidBy,
                 amount,
@@ -232,10 +233,10 @@ const AddDataModal: React.FC<AddDataModalProps> = ({
                 isPaid: userId === paymentForm.paidBy, // Payer is automatically marked as paid
             }));
 
-            await localStorageService.createPaymentParticipants(participants);
+            await paymentService.createPaymentParticipants(participants);
 
             // Recalculate user balances and debt breakdown
-            await localStorageService.recalculateGroupBalances(group.id);
+            await balanceService.recalculateGroupBalances(group.id);
 
             // Reset form
             setPaymentForm({

@@ -7,7 +7,7 @@ import {
   Chip,
   Box,
 } from '@mui/material';
-import type { User, UserBalance } from '../types';
+import type { User, UserBalance } from '../database';
 
 interface UserCardProps {
   user: User;
@@ -81,7 +81,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, balance, currency, onClick })
             )}
           </Box>
         </Box>
-        
+
         {balance && (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Chip

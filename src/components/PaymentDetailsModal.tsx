@@ -18,7 +18,7 @@ import {
   Grid,
 } from '@mui/material';
 import { Close as CloseIcon, Person as PersonIcon, CheckCircle as CheckCircleIcon, Pending as PendingIcon } from '@mui/icons-material';
-import type { Payment, PaymentParticipant, User } from '../types';
+import type { Payment, PaymentParticipant, User } from '../database';
 
 interface PaymentDetailsModalProps {
   isOpen: boolean;
@@ -195,7 +195,7 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
           <Typography variant="h6" component="h3" sx={{ mb: 2, fontWeight: 600 }}>
             Split Between Participants
           </Typography>
-          
+
           {participantUsers.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 4 }}>
               <Typography variant="body1" color="text.secondary">
@@ -208,9 +208,9 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
                 <React.Fragment key={user.id}>
                   <ListItem sx={{ px: 0, py: 1 }}>
                     <ListItemAvatar>
-                      <Avatar sx={{ 
+                      <Avatar sx={{
                         bgcolor: isPaid ? 'success.main' : 'warning.main',
-                        width: 40, 
+                        width: 40,
                         height: 40,
                         fontSize: '1rem'
                       }}>

@@ -4,6 +4,7 @@ export type {
     Group,
     UserGroup,
     Payment,
+    PaymentCategory,
     PaymentParticipant,
     UserBalance,
 } from './models';

@@ -1,5 +1,5 @@
 import { databaseService } from './DatabaseService';
-import type { Group, UserGroup } from '../types';
+import type { Group, UserGroup } from '../database';
 
 export const groupService = {
     async getGroups(): Promise<Group[]> {

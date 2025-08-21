@@ -29,6 +29,8 @@ export interface UserGroup {
     isActive: boolean;
 }
 
+export type PaymentCategory = 'food' | 'transport' | 'entertainment' | 'utilities' | 'rent' | 'shopping' | 'other';
+
 // Payment entity representing a payment made within a group
 export interface Payment {
     id: string;
@@ -36,7 +38,7 @@ export interface Payment {
     paidBy: string; // User ID who made the payment
     amount: number; // Total amount of the payment
     description: string;
-    category?: string; // e.g., "food", "transport", "entertainment"
+    category?: PaymentCategory; // e.g., "food", "transport", "entertainment"
     date: Date;
     createdAt: Date;
     updatedAt: Date;

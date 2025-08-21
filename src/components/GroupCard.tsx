@@ -8,7 +8,7 @@ import {
     IconButton,
 } from '@mui/material';
 import { ChevronRight as ChevronRightIcon } from '@mui/icons-material';
-import type { Group } from '../types';
+import type { Group } from '../database';
 
 interface GroupCardProps {
     group: Group;

@@ -1,5 +1,5 @@
 import { databaseService } from './DatabaseService';
-import type { Payment, PaymentParticipant } from '../types';
+import type { Payment, PaymentParticipant } from '../database';
 
 export const paymentService = {
     async getPayments(): Promise<Payment[]> {

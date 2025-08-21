@@ -7,7 +7,7 @@ import {
   Box,
   Avatar,
 } from '@mui/material';
-import type { Payment, User } from '../types';
+import type { Payment, User } from '../database';
 
 interface PaymentCardProps {
   payment: Payment;
@@ -65,7 +65,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ payment, paidByUser, currency
               {formatDate(payment.date)}
             </Typography>
           </Box>
-          
+
           <Typography variant="h5" component="span" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
             {getCurrencySymbol(currency)}{payment.amount.toFixed(2)}
           </Typography>
@@ -81,7 +81,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ payment, paidByUser, currency
               sx={{ fontSize: '0.7rem' }}
             />
           )}
-          
+
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Avatar sx={{ width: 24, height: 24, fontSize: '0.7rem' }}>
               {paidByUser?.name.charAt(0).toUpperCase() || '?'}
