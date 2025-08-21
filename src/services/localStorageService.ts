@@ -433,6 +433,81 @@ class LocalStorageService {
             console.error('Error recalculating group balances:', error);
         }
     }
+
+    // Calculate detailed debt relationships between users in a group
+    async getGroupDebtBreakdown(groupId: string): Promise<Array<{
+        fromUserId: string;
+        toUserId: string;
+        amount: number;
+        description: string;
+    }>> {
+        try {
+            const payments = await this.getPaymentsByGroupId(groupId);
+            const participants = await this.getPaymentParticipants();
+            const userGroups = await this.getUserGroups();
+
+            // Get active group members
+            const memberIds = userGroups
+                .filter(ug => ug.groupId === groupId && ug.isActive)
+                .map(ug => ug.userId);
+
+            const debtBreakdown: Array<{
+                fromUserId: string;
+                toUserId: string;
+                amount: number;
+                description: string;
+            }> = [];
+
+            // For each payment, calculate who owes what to whom
+            for (const payment of payments) {
+                const paymentParticipants = participants.filter(pp => pp.paymentId === payment.id);
+
+                for (const participant of paymentParticipants) {
+                    if (participant.userId !== payment.paidBy) {
+                        // This participant owes money to the payer
+                        debtBreakdown.push({
+                            fromUserId: participant.userId,
+                            toUserId: payment.paidBy,
+                            amount: participant.share,
+                            description: payment.description,
+                        });
+                    }
+                }
+            }
+
+            // Consolidate debts between the same users
+            const consolidatedDebts = new Map<string, number>();
+
+            for (const debt of debtBreakdown) {
+                const key = `${debt.fromUserId}-${debt.toUserId}`;
+                const existingAmount = consolidatedDebts.get(key) || 0;
+                consolidatedDebts.set(key, existingAmount + debt.amount);
+            }
+
+            // Convert back to array format
+            const result: Array<{
+                fromUserId: string;
+                toUserId: string;
+                amount: number;
+                description: string;
+            }> = [];
+
+            for (const [key, amount] of consolidatedDebts) {
+                const [fromUserId, toUserId] = key.split('-');
+                result.push({
+                    fromUserId,
+                    toUserId,
+                    amount,
+                    description: 'Consolidated debt',
+                });
+            }
+
+            return result;
+        } catch (error) {
+            console.error('Error calculating debt breakdown:', error);
+            return [];
+        }
+    }
 }
 
 // Export a singleton instance

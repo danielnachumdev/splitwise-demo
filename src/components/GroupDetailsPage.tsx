@@ -18,6 +18,7 @@ import localStorageService from '../services/localStorageService';
 import PaymentStatement from './PaymentStatement';
 import UserDisplay from './UserDisplay';
 import AddDataModal from './AddDataModal';
+import DebtBreakdown from './DebtBreakdown';
 
 const GroupDetailsPage: React.FC = () => {
     const { groupId } = useParams<{ groupId: string }>();
@@ -27,6 +28,12 @@ const GroupDetailsPage: React.FC = () => {
     const [payments, setPayments] = useState<Payment[]>([]);
     const [paymentParticipants, setPaymentParticipants] = useState<PaymentParticipant[]>([]);
     const [userBalances, setUserBalances] = useState<UserBalance[]>([]);
+    const [debtBreakdown, setDebtBreakdown] = useState<Array<{
+        fromUserId: string;
+        toUserId: string;
+        amount: number;
+        description: string;
+    }>>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddDataModal, setShowAddDataModal] = useState(false);
@@ -75,6 +82,10 @@ const GroupDetailsPage: React.FC = () => {
             const balances = await localStorageService.getUserBalances();
             const groupBalances = balances.filter(balance => balance.groupId === groupId);
             setUserBalances(groupBalances);
+
+            // Load debt breakdown
+            const debtData = await localStorageService.getGroupDebtBreakdown(groupId!);
+            setDebtBreakdown(debtData);
 
         } catch (error) {
             setError('Failed to load group data');
@@ -220,8 +231,21 @@ const GroupDetailsPage: React.FC = () => {
                         </Paper>
                     </Grid>
 
-                    {/* Payments Section */}
+                    {/* Main Content Section */}
                     <Grid item xs={12} md={8}>
+                        {/* Debt Breakdown Section */}
+                        <Paper sx={{ p: 3, mb: 3 }}>
+                            <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 600 }}>
+                                Settlement Summary
+                            </Typography>
+                            <DebtBreakdown
+                                debtBreakdown={debtBreakdown}
+                                users={users}
+                                currency={group.currency}
+                            />
+                        </Paper>
+
+                        {/* Payments Section */}
                         <Paper sx={{ p: 3 }}>
                             <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 600 }}>
                                 Payment History ({payments.length})

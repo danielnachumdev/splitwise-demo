@@ -234,7 +234,7 @@ const AddDataModal: React.FC<AddDataModalProps> = ({
 
             await localStorageService.createPaymentParticipants(participants);
 
-            // Recalculate user balances
+            // Recalculate user balances and debt breakdown
             await localStorageService.recalculateGroupBalances(group.id);
 
             // Reset form
