@@ -230,6 +230,209 @@ class LocalStorageService {
         });
         return totalSize;
     }
+
+    // Demo data initialization
+    async initializeDemoData(): Promise<void> {
+        // Check if demo data already exists
+        const existingGroups = await this.getGroups();
+        if (existingGroups.length > 0) return;
+
+        try {
+            // Create demo users
+            const user1 = await this.createUser({
+                name: 'Alice Johnson',
+                email: 'alice@demo.com',
+            });
+
+            const user2 = await this.createUser({
+                name: 'Bob Smith',
+                email: 'bob@demo.com',
+            });
+
+            const user3 = await this.createUser({
+                name: 'Carol Davis',
+                email: 'carol@demo.com',
+            });
+
+            // Create demo group
+            const group = await this.createGroup({
+                name: 'Roommates',
+                description: 'Shared expenses for our apartment',
+                currency: 'USD',
+                createdBy: user1.id,
+            });
+
+            // Add users to group
+            await this.addUserToGroup(user1.id, group.id, 'admin');
+            await this.addUserToGroup(user2.id, group.id, 'member');
+            await this.addUserToGroup(user3.id, group.id, 'member');
+
+            // Create demo payments
+            const payment1 = await this.createPayment({
+                groupId: group.id,
+                paidBy: user1.id,
+                amount: 120.00,
+                description: 'Grocery shopping',
+                category: 'food',
+                date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+            });
+
+            const payment2 = await this.createPayment({
+                groupId: group.id,
+                paidBy: user2.id,
+                amount: 85.50,
+                description: 'Internet bill',
+                category: 'utilities',
+                date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+            });
+
+            const payment3 = await this.createPayment({
+                groupId: group.id,
+                paidBy: user3.id,
+                amount: 45.00,
+                description: 'Pizza delivery',
+                category: 'food',
+                date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+            });
+
+            // Create payment participants
+            await this.createPaymentParticipants([
+                {
+                    paymentId: payment1.id,
+                    userId: user1.id,
+                    share: 40.00,
+                    isPaid: true,
+                },
+                {
+                    paymentId: payment1.id,
+                    userId: user2.id,
+                    share: 40.00,
+                    isPaid: false,
+                },
+                {
+                    paymentId: payment1.id,
+                    userId: user3.id,
+                    share: 40.00,
+                    isPaid: false,
+                },
+            ]);
+
+            await this.createPaymentParticipants([
+                {
+                    paymentId: payment2.id,
+                    userId: user1.id,
+                    share: 28.50,
+                    isPaid: false,
+                },
+                {
+                    paymentId: payment2.id,
+                    userId: user2.id,
+                    share: 28.50,
+                    isPaid: true,
+                },
+                {
+                    paymentId: payment2.id,
+                    userId: user3.id,
+                    share: 28.50,
+                    isPaid: false,
+                },
+            ]);
+
+            await this.createPaymentParticipants([
+                {
+                    paymentId: payment3.id,
+                    userId: user1.id,
+                    share: 15.00,
+                    isPaid: false,
+                },
+                {
+                    paymentId: payment3.id,
+                    userId: user2.id,
+                    share: 15.00,
+                    isPaid: false,
+                },
+                {
+                    paymentId: payment3.id,
+                    userId: user3.id,
+                    share: 15.00,
+                    isPaid: true,
+                },
+            ]);
+
+            // Initialize user balances
+            await this.updateUserBalance({
+                userId: user1.id,
+                groupId: group.id,
+                totalPaid: 40.00,
+                totalOwed: 43.50,
+                balance: -3.50,
+            });
+
+            await this.updateUserBalance({
+                userId: user2.id,
+                groupId: group.id,
+                totalPaid: 113.50,
+                totalOwed: 55.00,
+                balance: 58.50,
+            });
+
+            await this.updateUserBalance({
+                userId: user3.id,
+                groupId: group.id,
+                totalPaid: 15.00,
+                totalOwed: 83.50,
+                balance: -68.50,
+            });
+
+        } catch (error) {
+            console.error('Error initializing demo data:', error);
+        }
+    }
+
+    // Recalculate user balances for a group
+    async recalculateGroupBalances(groupId: string): Promise<void> {
+        try {
+            // Get all payments for the group
+            const payments = await this.getPaymentsByGroupId(groupId);
+
+            // Get all participants for these payments
+            const allParticipants = await this.getPaymentParticipants();
+            const groupParticipants = allParticipants.filter(pp =>
+                payments.some(payment => payment.id === pp.paymentId)
+            );
+
+            // Get all users in the group
+            const userGroups = await this.getUserGroups();
+            const memberIds = userGroups
+                .filter(ug => ug.groupId === groupId && ug.isActive)
+                .map(ug => ug.userId);
+
+            // Calculate balances for each user
+            for (const userId of memberIds) {
+                let totalPaid = 0;
+                let totalOwed = 0;
+
+                // Calculate total paid (payments made by this user)
+                const paymentsMade = payments.filter(p => p.paidBy === userId);
+                totalPaid = paymentsMade.reduce((sum, p) => sum + p.amount, 0);
+
+                // Calculate total owed (shares in payments)
+                const userShares = groupParticipants.filter(pp => pp.userId === userId);
+                totalOwed = userShares.reduce((sum, pp) => sum + pp.share, 0);
+
+                // Update balance
+                await this.updateUserBalance({
+                    userId,
+                    groupId,
+                    totalPaid,
+                    totalOwed,
+                    balance: totalPaid - totalOwed,
+                });
+            }
+        } catch (error) {
+            console.error('Error recalculating group balances:', error);
+        }
+    }
 }
 
 // Export a singleton instance

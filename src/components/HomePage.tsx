@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Container,
     Typography,
@@ -22,6 +23,7 @@ import GroupCard from './GroupCard';
 const DEMO_USER_ID = 'demo-user-123';
 
 const HomePage: React.FC = () => {
+    const navigate = useNavigate();
     const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -31,6 +33,7 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         initializeDemoUser();
         loadGroups();
+        initializeDemoData();
     }, []);
 
     const initializeDemoUser = async () => {
@@ -47,6 +50,16 @@ const HomePage: React.FC = () => {
         } catch (error) {
             setError('Failed to initialize demo user');
             console.error('Error initializing demo user:', error);
+        }
+    };
+
+    const initializeDemoData = async () => {
+        try {
+            await localStorageService.initializeDemoData();
+            // Refresh groups after demo data is initialized
+            await loadGroups();
+        } catch (error) {
+            console.error('Error initializing demo data:', error);
         }
     };
 
@@ -89,8 +102,7 @@ const HomePage: React.FC = () => {
     };
 
     const handleGroupClick = (group: Group) => {
-        // TODO: Navigate to group details page
-        console.log('Navigate to group:', group.id);
+        navigate(`/group/${group.id}`);
     };
 
     if (loading) {
