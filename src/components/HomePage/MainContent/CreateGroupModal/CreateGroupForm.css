@@ -1,0 +1,37 @@
+/* CreateGroupForm Component Styles */
+
+.create-group-form {
+    /* Form container styles */
+}
+
+.group-name-field {
+    margin-bottom: 24px;
+}
+
+.description-field {
+    margin-bottom: 24px;
+}
+
+.currency-field {
+    margin-bottom: 16px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+.cancel-button {
+    min-width: 100px;
+}
+
+.submit-button {
+    min-width: 100px;
+}
+
+.submit-button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

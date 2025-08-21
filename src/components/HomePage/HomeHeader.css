@@ -1,0 +1,27 @@
+/* HomeHeader Component Styles */
+
+.home-header-appbar {
+    background-color: white;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.home-header-toolbar {
+    display: flex;
+    align-items: center;
+}
+
+.home-header-brand {
+    flex-grow: 1;
+}
+
+.home-header-title {
+    font-weight: bold;
+}
+
+.home-header-subtitle {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.home-header-welcome {
+    color: rgba(0, 0, 0, 0.6);
+}

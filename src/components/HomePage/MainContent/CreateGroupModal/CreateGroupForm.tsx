@@ -9,6 +9,7 @@ import {
     Button,
     CircularProgress,
 } from '@mui/material';
+import './CreateGroupForm.css';
 
 interface CreateGroupFormProps {
     onSubmit: (groupData: {
@@ -97,7 +98,7 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="create-group-form">
             {/* Group Name */}
             <TextField
                 autoFocus
@@ -112,7 +113,7 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
                 placeholder="e.g., Roommates, Vacation Trip, Dinner Club"
                 error={!!errors.name}
                 helperText={errors.name}
-                sx={{ mb: 3 }}
+                className="group-name-field"
             />
 
             {/* Description */}
@@ -131,11 +132,11 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
                 helperText={
                     errors.description || `${formData.description.length}/200 characters`
                 }
-                sx={{ mb: 3 }}
+                className="description-field"
             />
 
             {/* Currency */}
-            <FormControl fullWidth sx={{ mb: 2 }}>
+            <FormControl fullWidth className="currency-field">
                 <InputLabel id="currency-label">Currency</InputLabel>
                 <Select
                     labelId="currency-label"
@@ -153,11 +154,11 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
             </FormControl>
 
             {/* Form Actions */}
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+            <Box className="form-actions">
                 <Button
                     onClick={handleCancel}
                     disabled={isSubmitting}
-                    sx={{ minWidth: 100 }}
+                    className="cancel-button"
                 >
                     Cancel
                 </Button>
@@ -165,10 +166,10 @@ const CreateGroupForm: React.FC<CreateGroupFormProps> = ({
                     type="submit"
                     variant="contained"
                     disabled={isSubmitting}
-                    sx={{ minWidth: 100 }}
+                    className="submit-button"
                 >
                     {isSubmitting ? (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box className="submit-button-content">
                             <CircularProgress size={16} />
                             Creating...
                         </Box>

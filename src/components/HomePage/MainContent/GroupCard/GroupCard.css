@@ -16,13 +16,13 @@
 }
 
 .group-card-content {
-    padding: 24px;
+    padding: 16px;
 }
 
 .group-card-header {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .group-card-info {
@@ -36,7 +36,7 @@
 }
 
 .group-title.has-description {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .group-description {
@@ -63,7 +63,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 8px;
+    padding-top: 4px;
 }
 
 .group-created-date {

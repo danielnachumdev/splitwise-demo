@@ -1,0 +1,24 @@
+/* HomePage Component Styles */
+
+.home-page-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #fafafa;
+}
+
+.loading-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fafafa;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    margin-bottom: 16px;
+}

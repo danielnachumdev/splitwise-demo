@@ -5,6 +5,7 @@ import type { Group, User } from '../../database';
 import { groupService } from '../../services';
 import HomeHeader from './HomeHeader';
 import { MainContent } from './MainContent';
+import './HomePage.css';
 
 // For demo purposes, we'll use a hardcoded user ID
 // In a real app, this would come from authentication
@@ -65,17 +66,9 @@ const HomePage: React.FC = () => {
     // 5. RENDER LOGIC (at the bottom)
     if (loading) {
         return (
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: 'grey.50',
-                }}
-            >
-                <Box sx={{ textAlign: 'center' }}>
-                    <CircularProgress size={48} sx={{ mb: 2 }} />
+            <Box className="loading-container">
+                <Box className="loading-content">
+                    <CircularProgress size={48} className="loading-spinner" />
                     <Typography variant="body1" color="text.secondary">
                         Loading groups...
                     </Typography>
@@ -85,7 +78,7 @@ const HomePage: React.FC = () => {
     }
 
     return (
-        <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'grey.50' }}>
+        <Box className="home-page-container">
             <HomeHeader currentUser={currentUser} />
             <MainContent
                 error={error}
