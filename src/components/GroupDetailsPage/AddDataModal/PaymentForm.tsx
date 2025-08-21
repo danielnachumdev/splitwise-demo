@@ -7,7 +7,6 @@ import {
     MenuItem,
     Box,
     Typography,
-    Grid,
     Checkbox,
     FormControlLabel,
 } from '@mui/material';
@@ -44,8 +43,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                 Create a new payment statement
             </Typography>
 
-            <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+                <Box sx={{ flex: 1 }}>
                     <TextField
                         fullWidth
                         label="Description"
@@ -95,9 +94,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                             ))}
                         </Select>
                     </FormControl>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} md={6}>
+                <Box sx={{ flex: 1 }}>
                     <Typography variant="subtitle2" className="add-data-participants-title">
                         Select Participants & Set Shares
                     </Typography>
@@ -140,8 +139,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                             </Typography>
                         </Box>
                     )}
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
         </>
     );
 };

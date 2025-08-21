@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import type { Group, User } from '../../database';
+import type { Group } from '../../database';
 import { groupService, paymentService } from '../../services';
 import HomeHeader from './HomeHeader';
 import { MainContent } from './MainContent';
@@ -16,7 +16,6 @@ const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState(true);
-    const [currentUser] = useState<User | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     // 2. EFFECTS (after state)
@@ -105,7 +104,7 @@ const HomePage: React.FC = () => {
 
     return (
         <Box className="home-page-container">
-            <HomeHeader currentUser={currentUser} />
+            <HomeHeader />
             <MainContent
                 error={error}
                 groups={groups}

@@ -1,13 +1,12 @@
 import React from 'react';
 import { AppBar, Toolbar, Box, Typography } from '@mui/material';
-import type { User } from '../../database';
 import './HomeHeader.css';
 
 interface HomeHeaderProps {
-    currentUser: User | null;
+    // currentUser parameter removed as it's not used
 }
 
-const HomeHeader: React.FC<HomeHeaderProps> = ({ currentUser }) => (
+const HomeHeader: React.FC<HomeHeaderProps> = () => (
     <AppBar position="static" elevation={1} className="home-header-appbar">
         <Toolbar className="home-header-toolbar">
             <Box className="home-header-brand">

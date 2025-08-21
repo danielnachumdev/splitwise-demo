@@ -9,15 +9,13 @@ import {
   Box,
   Avatar,
   Chip,
-  Divider,
   List,
   ListItem,
   ListItemText,
   ListItemAvatar,
   Paper,
-  Grid,
 } from '@mui/material';
-import { Close as CloseIcon, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from '@mui/icons-material';
+import { Close as CloseIcon, TrendingUp as TrendingUpIcon } from '@mui/icons-material';
 import type { User, UserBalance, Payment, PaymentParticipant } from '../../database';
 import { formatDate, getCurrencySymbol } from '../../utils';
 
@@ -145,38 +143,32 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
             <Typography variant="h6" component="h3" sx={{ mb: 2, fontWeight: 600 }}>
               Financial Summary
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                    {formatAmount(balance.balance)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Net Balance
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                    {formatAmount(balance.totalPaid)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Paid
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', color: 'error.main' }}>
-                    {formatAmount(balance.totalOwed)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Owed
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: 2 }}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                  {formatAmount(balance.balance)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Net Balance
+                </Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                  {formatAmount(balance.totalPaid)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Total Paid
+                </Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', color: 'error.main' }}>
+                  {formatAmount(balance.totalOwed)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Total Owed
+                </Typography>
+              </Box>
+            </Box>
 
             <Box sx={{ mt: 2, textAlign: 'center' }}>
               <Chip

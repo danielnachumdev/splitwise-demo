@@ -15,7 +15,6 @@ import {
   ListItemAvatar,
   Avatar,
   Paper,
-  Grid,
 } from '@mui/material';
 import { Close as CloseIcon, Person as PersonIcon, CheckCircle as CheckCircleIcon, Pending as PendingIcon } from '@mui/icons-material';
 import type { Payment, PaymentParticipant, User } from '../../database';
@@ -104,44 +103,40 @@ const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({
       <DialogContent>
         {/* Payment Summary */}
         <Paper sx={{ p: 3, mb: 3, bgcolor: 'primary.50' }}>
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} sm={6}>
-              <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-                <Typography variant="h3" component="div" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                  {formatAmount(payment.amount)}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Total Amount
+          <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexDirection: { xs: 'column', sm: 'row' } }}>
+            <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}>
+              <Typography variant="h3" component="div" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                {formatAmount(payment.amount)}
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Total Amount
+              </Typography>
+            </Box>
+            <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'right' } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', sm: 'flex-end' }, gap: 1, mb: 1 }}>
+                <PersonIcon color="primary" />
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  {totalParticipants} {totalParticipants === 1 ? 'Person' : 'People'}
                 </Typography>
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Box sx={{ textAlign: { xs: 'center', sm: 'right' } }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', sm: 'flex-end' }, gap: 1, mb: 1 }}>
-                  <PersonIcon color="primary" />
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    {totalParticipants} {totalParticipants === 1 ? 'Person' : 'People'}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'center', sm: 'flex-end' } }}>
-                  <Chip
-                    icon={<CheckCircleIcon />}
-                    label={`${paidParticipants} Paid`}
-                    color="success"
-                    size="small"
-                    variant="outlined"
-                  />
-                  <Chip
-                    icon={<PendingIcon />}
-                    label={`${pendingParticipants} Pending`}
-                    color="warning"
-                    size="small"
-                    variant="outlined"
-                  />
-                </Box>
+              <Box sx={{ display: 'flex', gap: 1, justifyContent: { xs: 'center', sm: 'flex-end' } }}>
+                <Chip
+                  icon={<CheckCircleIcon />}
+                  label={`${paidParticipants} Paid`}
+                  color="success"
+                  size="small"
+                  variant="outlined"
+                />
+                <Chip
+                  icon={<PendingIcon />}
+                  label={`${pendingParticipants} Pending`}
+                  color="warning"
+                  size="small"
+                  variant="outlined"
+                />
               </Box>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Paper>
 
         {/* Payer Information */}
