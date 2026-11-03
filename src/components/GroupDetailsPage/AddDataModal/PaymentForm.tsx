@@ -24,7 +24,7 @@ interface PaymentFormProps {
     };
     existingUsers: User[];
     paymentCategories: PaymentCategory[];
-    onFormChange: (field: string, value: any) => void;
+    onFormChange: (field: string, value: unknown) => void;
     onParticipantToggle: (userId: string) => void;
     onShareChange: (userId: string, share: string) => void;
 }

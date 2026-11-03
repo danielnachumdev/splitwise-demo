@@ -73,7 +73,7 @@ const AddDataModal: React.FC<AddDataModalProps> = ({
         setUserForm(prev => ({ ...prev, [field]: value }));
     };
 
-    const handlePaymentFormChange = (field: string, value: any) => {
+    const handlePaymentFormChange = (field: string, value: unknown) => {
         setPaymentForm(prev => ({ ...prev, [field]: value }));
     };
 
