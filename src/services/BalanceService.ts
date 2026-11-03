@@ -28,18 +28,20 @@ export const balanceService = {
         }
     },
 
-    async recalculateGroupBalances(_groupId: string): Promise<void> {
+    async recalculateGroupBalances(groupId: string): Promise<void> {
+        void groupId;
         // This method will be implemented with business logic
         // It will use other services to calculate and update balances
         throw new Error('Not implemented yet - requires integration with other services');
     },
 
-    async getGroupDebtBreakdown(_groupId: string): Promise<Array<{
+    async getGroupDebtBreakdown(groupId: string): Promise<Array<{
         fromUserId: string;
         toUserId: string;
         amount: number;
         description: string;
     }>> {
+        void groupId;
         // This method will be implemented with business logic
         // It will use other services to calculate debt relationships
         throw new Error('Not implemented yet - requires integration with other services');
